@@ -6,6 +6,8 @@
 #include <filesystem>
 
 #include "driver/Driver.h"
+#include "gui/WindowPane.h"
+#include "gui/WindowObj.h"
 
 #include <nlohmann/json.hpp>
 
@@ -13,76 +15,45 @@ namespace fs = std::filesystem;
 
 typedef std::vector<std::vector<WINDOW*>> win_matrix;
 
-/*
- * So, let's start off by just hardcoding a bunch of shit.
- *
- * TODO:
- * 1. Write a c++ implementation of the bash scripts we are already using to change themes.
- * 		1a. Bash
- * 		1b. Vim
- * 		1c. Alacritty
- * 		1d. i3
- *
- */
-
-win_matrix win_builder(int start_y, int start_x, int size_y, int size_x, int num_y, int num_x){
-	std::vector<int> y_vals;
-	std::vector<int> x_vals;
-
-	win_matrix matrix;
-
-	int cell_yheight = size_y / num_y;
-	int cell_xheight = size_x / num_x;
-
-	for(int y = 0; y < num_y; y++){
-		y_vals.push_back(start_y + y*(cell_yheight));
-	}
-	for(int x = 0; x < num_y; x++){
-		x_vals.push_back(start_x + x*(cell_xheight));
-	}
-
-	for(int y = 0; y < y_vals.size(); y++){
-		matrix.push_back(std::vector<WINDOW*>());
-		for(int x = 0; x < x_vals.size(); x++){
-			matrix.at(y).push_back(newwin(cell_yheight, cell_xheight, y_vals.at(y), x_vals.at(x)));
-		}
-	}
-
-	return matrix;
-}
-
 int main() {
 
 	initscr();
+	curs_set(0);
+	start_color();
+	init_pair(1, COLOR_BLUE, COLOR_RED);
 
 	int XMAX, YMAX;
 	getmaxyx(stdscr, YMAX, XMAX);
 
-//	WINDOW* win_app = newwin(YMAX/2, XMAX/2, 0, 0);
-//	WINDOW* win_cre = newwin(YMAX/2, XMAX/2, 0, XMAX/2 + (XMAX%2 != 0));
-//	WINDOW* win_del = newwin(YMAX/2, XMAX/2, YMAX/2 + (YMAX%2 != 0), 0);
-//	WINDOW* win_edi = newwin(YMAX/2, XMAX/2, YMAX/2 + (YMAX%2 != 0), XMAX/2 + (XMAX%2 != 0));
-
-	win_matrix winv_home = win_builder(0, 0, YMAX, XMAX, 2, 2);
-
-	refresh();
-
-	box(winv_home.at(0).at(0), 0, 0);
-	box(winv_home.at(0).at(1), 0, 0);
-	box(winv_home.at(1).at(0), 0, 0);
-	box(winv_home.at(1).at(1), 0, 0);
-
-	wprintw(winv_home.at(0).at(0), "Apply Theme");
-	wprintw(winv_home.at(0).at(1), "Create Theme");
-	wprintw(winv_home.at(1).at(0), "Delete Theme");
-	wprintw(winv_home.at(1).at(1), "Edit Theme");
-
-	wrefresh(winv_home.at(0).at(0));
-	wrefresh(winv_home.at(0).at(1));
-	wrefresh(winv_home.at(1).at(0));
-	wrefresh(winv_home.at(1).at(1));
-
+//	wbkgd(winv_home.at(0).at(0), COLOR_PAIR(1));
+//	wrefresh(winv_home.at(0).at(0));
 //	mvaddstr(2, 2, "HELLO");
+
+	std::vector<std::string> titles{"Apply Theme", "Create Theme", "Edit Theme", "Delete Theme"};
+
+	WindowPane home(YMAX/4, XMAX/5, YMAX/2, 3*XMAX/5, 2, 2, titles);
+	home.build();
+	home.draw();
+
+	char choice = getch();
+	while(choice != 'q'){
+		switch(choice){
+			case 'h':
+				home.select_at(0, 0);
+				break;
+			case 'j':
+				home.select_at(0, 1);
+				break;
+			case 'k':
+				home.select_at(1, 0);
+				break;
+			case 'l':
+				home.select_at(1, 1);
+				break;
+		}
+		choice = getch();
+	}
+
 
 	getch();
 	endwin();
