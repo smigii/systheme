@@ -6,3 +6,5 @@ set(CMAKE_CXX_STANDARD 20)
 include_directories("include")
 
 add_executable(systheme src/main.cpp src/driver/Driver.cpp src/driver/Driver.h)
+
+target_link_libraries(systheme ncurses)
