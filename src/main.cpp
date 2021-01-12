@@ -5,13 +5,17 @@
 #include <iomanip>
 #include <filesystem>
 
+#include "driver/Driver.h"
+
+#include <nlohmann/json.hpp>
+
 namespace fs = std::filesystem;
 
 /*
  * So, let's start off by just hardcoding a bunch of shit.
  *
  * TODO:
- * 1. Write a c++ implementation of the bash scripts we are alreadu using to change themes.
+ * 1. Write a c++ implementation of the bash scripts we are already using to change themes.
  * 		1a. Bash
  * 		1b. Vim
  * 		1c. Alacritty
@@ -21,6 +25,15 @@ namespace fs = std::filesystem;
 
 int main() {
 
+	using json = nlohmann::json;
+
+	Driver d("/home/smigii/.config/systheme/");
+
+	return 0;
+}
+
+
+void old(){
 	std::string root = "/home/smigii/.config/systheme/";
 
 	// BASH
@@ -57,6 +70,5 @@ int main() {
 	std::string test = "\n\ntest.\n";
 	ofile << "\n\nHELLO";
 
-
-	return 0;
+	std::ofstream("../test2.png", std::ios::binary) << std::ifstream("../test.png", std::ios::binary).rdbuf();
 }
