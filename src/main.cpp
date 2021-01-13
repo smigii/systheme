@@ -6,14 +6,14 @@
 #include <filesystem>
 
 #include "driver/Driver.h"
+
+#include "gui/WindowPage.h"
 #include "gui/WindowPane.h"
 #include "gui/WindowObj.h"
 
 #include <nlohmann/json.hpp>
 
 namespace fs = std::filesystem;
-
-typedef std::vector<std::vector<WINDOW*>> win_matrix;
 
 int main() {
 
@@ -24,43 +24,49 @@ int main() {
 
 	int XMAX, YMAX;
 	getmaxyx(stdscr, YMAX, XMAX);
-
-//	wbkgd(winv_home.at(0).at(0), COLOR_PAIR(1));
-//	wrefresh(winv_home.at(0).at(0));
-//	mvaddstr(2, 2, "HELLO");
+//	XMAX = YMAX = 50;
 
 	std::vector<std::string> titles{"Apply Theme", "Create Theme", "Edit Theme", "Delete Theme"};
+	std::vector<std::string> test{"TEST1", "TEST2"};
 
-	WindowPane home(YMAX/4, XMAX/5, YMAX/2, 3*XMAX/5, 2, 2, titles);
-	home.build();
-	home.draw();
+	WindowPane wpn_home = WindowPane(YMAX / 4, XMAX / 5, YMAX / 2, 3 * XMAX / 5, 2, 2, titles);
+	WindowPane wpn_test = WindowPane(0, 0, YMAX, XMAX/2, 1, 2, test);
 
-	char choice = getch();
-	while(choice != 'q'){
-		switch(choice){
-			case 'h':
-				home.select_at(0, 0);
-				break;
-			case 'j':
-				home.select_at(0, 1);
-				break;
-			case 'k':
-				home.select_at(1, 0);
-				break;
-			case 'l':
-				home.select_at(1, 1);
-				break;
-		}
-		choice = getch();
-	}
+	WindowPage wpg_main = WindowPage();
+	WindowPage wpg_test = WindowPage();
+
+	wpg_main.add_pane(&wpn_home);
+	wpg_test.add_pane(&wpn_test);
+
+	wpg_main.draw_all();
+	getch();
+
+	wpg_test.build_all();
+	wpg_test.draw_all();
+	getch();
+
+//	char choice = getch();
+//	while(choice != 'q'){
+//		switch(choice){
+//			case 'h':
+//				wpn_home.select_at(0, 0);
+//				break;
+//			case 'j':
+//				wpn_home.select_at(0, 1);
+//				break;
+//			case 'k':
+//				wpn_home.select_at(1, 0);
+//				break;
+//			case 'l':
+//				wpn_home.select_at(1, 1);
+//				break;
+//		}
+//		choice = getch();
+//	}
 
 
 	getch();
 	endwin();
-
-//	using json = nlohmann::json;
-
-	Driver d("/home/smigii/.config/systheme/");
 
 	return 0;
 }

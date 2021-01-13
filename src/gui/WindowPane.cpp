@@ -4,10 +4,50 @@
 
 #include "WindowPane.h"
 
+#include <iostream>
+
 WindowPane::WindowPane(int sty, int stx, int siy, int six, int ny, int nx, std::vector<std::string> text)
 : start_y{sty}, start_x{stx}, size_y{siy}, size_x{six}, num_y{ny}, num_x{nx}, vec_text{text} {
-
+	test2 = false;
 }
+
+WindowPane::WindowPane(const WindowPane &wp) {
+	start_y = wp.start_y;
+	start_x = wp.start_x;
+	size_y = wp.size_y;
+	size_x = wp.size_x;
+	num_y = wp.num_y;
+	num_x = wp.num_y;
+
+	vec_text = wp.vec_text;
+	pane = wp.pane;
+
+	std::cout << "copy const" << std::endl;
+}
+//WindowPane::WindowPane(WindowPane &&wp) {
+//	start_y = wp.start_y;
+//	start_x = wp.start_x;
+//	size_y = wp.size_y;
+//	size_x = wp.size_x;
+//	num_y = wp.num_y;
+//	num_x = wp.num_y;
+//
+//	vec_text = wp.vec_text;
+//	pane = wp.pane;
+//}
+//WindowPane& WindowPane::operator=(WindowPane &&wp){
+//	start_y = wp.start_y;
+//	start_x = wp.start_x;
+//	size_y = wp.size_y;
+//	size_x = wp.size_x;
+//	num_y = wp.num_y;
+//	num_x = wp.num_y;
+//
+//	vec_text = wp.vec_text;
+//	pane = wp.pane;
+//
+//	return *this;
+//}
 
 void WindowPane::build() {
 //	if(vec_text.size() != num_y * num_x)
@@ -38,6 +78,8 @@ void WindowPane::build() {
 		}
 	}
 
+	test2 = true;
+
 	refresh();
 }
 
@@ -53,9 +95,17 @@ void WindowPane::draw() {
 	}
 }
 
+WindowObj* WindowPane::get_win(int y, int x) {
+	return &pane.at(y).at(x);
+}
+
 void WindowPane::select_at(int y, int x) {
 	pane.at(y).at(x).select();
 }
 void WindowPane::deselect_at(int y, int x) {
 	pane.at(y).at(x).deselect();
+}
+
+void WindowPane::test(){
+	test2 = true;
 }

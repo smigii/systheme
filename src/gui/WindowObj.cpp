@@ -12,6 +12,19 @@ WindowObj::WindowObj(std::string _text, WINDOW* &_win)
 	: text{_text}, win{_win} {
 
 }
+WindowObj::WindowObj(const WindowObj &wo) {
+	text = wo.text;
+	win = wo.win;
+}
+//WindowObj::WindowObj(WindowObj &&wo) {
+//	text = wo.text;
+//	win = wo.win;
+//}
+//WindowObj& WindowObj::operator=(WindowObj &&wo){
+//	text = wo.text;
+//	win = wo.win;
+//	return *this;
+//}
 
 WINDOW *WindowObj::get_win() {
 	return win;
@@ -43,6 +56,7 @@ void WindowObj::print_text(std::string t) {
 void WindowObj::select() {
 	wattron(win, A_REVERSE);
 	print_text("> " + text + " <");
+	wattroff(win, A_REVERSE);
 }
 
 void WindowObj::deselect() {
@@ -52,4 +66,6 @@ void WindowObj::deselect() {
 
 	print_text(space);
 }
+
+
 

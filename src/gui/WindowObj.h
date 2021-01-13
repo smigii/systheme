@@ -16,7 +16,11 @@ private:
 
 public:
 	WindowObj(std::string text);
+
 	WindowObj(std::string text, WINDOW* &win);
+	WindowObj(const WindowObj &wo);
+//	WindowObj(WindowObj &&wo);
+//	WindowObj& operator=(WindowObj&& wo);
 
 	WINDOW* get_win();
 

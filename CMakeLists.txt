@@ -5,6 +5,6 @@ set(CMAKE_CXX_STANDARD 20)
 
 include_directories("include")
 
-add_executable(systheme src/main.cpp src/driver/Driver.cpp src/driver/Driver.h src/gui/WindowObj.cpp src/gui/WindowObj.h src/gui/WindowPane.cpp src/gui/WindowPane.h)
+add_executable(systheme src/main.cpp src/driver/Driver.cpp src/driver/Driver.h src/gui/WindowObj.cpp src/gui/WindowObj.h src/gui/WindowPane.cpp src/gui/WindowPane.h src/gui/WindowPage.cpp src/gui/WindowPage.h)
 
 target_link_libraries(systheme ncurses)
