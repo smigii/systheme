@@ -13,6 +13,14 @@
 
 #include <nlohmann/json.hpp>
 
+#define H_LFT -1
+#define H_CNT 0
+#define H_RGT 1
+#define V_TOP 1
+#define V_CNT 0
+#define V_BTM -1
+
+
 namespace fs = std::filesystem;
 
 int main() {
@@ -24,25 +32,26 @@ int main() {
 
 	int XMAX, YMAX;
 	getmaxyx(stdscr, YMAX, XMAX);
-//	XMAX = YMAX = 50;
 
-	std::vector<std::string> titles{"Apply Theme", "Create Theme", "Edit Theme", "Delete Theme"};
-	std::vector<std::string> test{"TEST1", "TEST2"};
+	// Pages
+	WindowPage page_home	= WindowPage();
+	WindowPage page_create	= WindowPage();
 
-	WindowPane wpn_home = WindowPane(YMAX / 4, XMAX / 5, YMAX / 2, 3 * XMAX / 5, 2, 2, titles);
-	WindowPane wpn_test = WindowPane(0, 0, YMAX, XMAX/2, 1, 2, test);
+	// Panes
+	WindowPane pane_home_main		= WindowPane(YMAX / 4, XMAX / 5, YMAX / 2, 3 * XMAX / 5, 1, 1);
+	WindowPane pane_create_ranger	= WindowPane(0, 0, 4 * YMAX / 5, XMAX, 1, 4);
+	WindowPane pane_create_output	= WindowPane(4 * YMAX / 5, 0, YMAX / 5, XMAX, 1, 1);
 
-	WindowPage wpg_main = WindowPage();
-	WindowPage wpg_test = WindowPage();
+	// Window Init
+	page_home.add_pane(&pane_home_main);
+	page_create.add_pane(&pane_create_output);
+	page_create.add_pane(&pane_create_ranger);
 
-	wpg_main.add_pane(&wpn_home);
-	wpg_test.add_pane(&wpn_test);
-
-	wpg_main.draw_all();
+	page_home.draw_all();
 	getch();
 
-	wpg_test.build_all();
-	wpg_test.draw_all();
+	clear();
+	page_create.draw_all();
 	getch();
 
 //	char choice = getch();

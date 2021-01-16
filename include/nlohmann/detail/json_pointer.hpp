@@ -771,7 +771,7 @@ class json_pointer
             // find next slash
             slash = reference_string.find_first_of('/', start))
         {
-            // use the text between the beginning of the reference token
+            // use the title between the beginning of the reference token
             // (start) and the last slash (slash).
             auto reference_token = reference_string.substr(start, slash - start);
 

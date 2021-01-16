@@ -6,6 +6,15 @@
 
 #include <iostream>
 
+WindowPane::WindowPane(int sty, int stx, int siy, int six, int ny, int nx)
+	: start_y{sty}, start_x{stx}, size_y{siy}, size_x{six}, num_y{ny}, num_x{nx} {
+	vec_text = std::vector<std::string>();
+	for(int i = 0; i < ny; i++){
+		for(int j = 0; j < nx; j++){
+			vec_text.push_back("");
+		}
+	}
+}
 WindowPane::WindowPane(int sty, int stx, int siy, int six, int ny, int nx, std::vector<std::string> text)
 : start_y{sty}, start_x{stx}, size_y{siy}, size_x{six}, num_y{ny}, num_x{nx}, vec_text{text} {
 	test2 = false;
@@ -104,6 +113,14 @@ void WindowPane::select_at(int y, int x) {
 }
 void WindowPane::deselect_at(int y, int x) {
 	pane.at(y).at(x).deselect();
+}
+
+void WindowPane::set_titles(int h_align, std::vector<std::string> titles) {
+	for(int y = 0; y < pane.size(); y++){
+		for(int x = 0; x < pane.at(y).size(); x++){
+			pane.at(y).at(x).set_title(titles.at(y*num_x + x));
+		}
+	}
 }
 
 void WindowPane::test(){

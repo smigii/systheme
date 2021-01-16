@@ -33,10 +33,12 @@ void WindowPage::add_pane(WindowPane* wp) {
 }
 
 void WindowPage::draw_pane(int pane) {
+	vec_pane.at(pane)->build();
 	vec_pane.at(pane)->draw();
 }
 void WindowPage::draw_all() {
 	for(WindowPane* wpn : vec_pane){
+		wpn->build();
 		wpn->draw();
 	}
 }
@@ -49,4 +51,34 @@ void WindowPage::build_all() {
 		wpn->build();
 		wpn->test();
 	}
+}
+
+WindowObj* WindowPage::seek(int start_x, int start_y, int inc_x, int inc_y) {
+	int x {start_x};
+	int y {start_y};
+
+	int MAXX, MAXY;
+	getmaxyx(stdscr, MAXY, MAXX);
+
+	while(x > 0 && x < MAXX && y > 0 && y < MAXY){
+
+
+
+		x += inc_x;
+		y += inc_y;
+	}
+
+	return nullptr;
+}
+void WindowPage::mv_r() {
+
+}
+void WindowPage::mv_l() {
+
+}
+void WindowPage::mv_u() {
+
+}
+void WindowPage::mv_d() {
+
 }

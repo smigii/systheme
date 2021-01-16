@@ -19,6 +19,7 @@ private:
 	bool test2;
 
 public:
+	WindowPane(int sty, int stx, int siy, int six, int ny, int nx);
 	WindowPane(int sty, int stx, int siy, int six, int ny, int nx, std::vector<std::string> texts);
 	WindowPane(const WindowPane &wp);
 //	WindowPane(WindowPane &&wp);
@@ -31,6 +32,8 @@ public:
 
 	void select_at(int y, int x);
 	void deselect_at(int y, int x);
+
+	void set_titles(int h_align, std::vector<std::string> vec_titles);
 
 	void test();
 };

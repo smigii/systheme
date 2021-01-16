@@ -2219,7 +2219,7 @@ class binary_reader
 
         if (JSON_HEDLEY_UNLIKELY(result_remainder != token_type::end_of_input))
         {
-            return sax->parse_error(chars_read, number_string, parse_error::create(115, chars_read, exception_message(input_format_t::ubjson, "invalid number text: " + number_lexer.get_token_string(), "high-precision number")));
+            return sax->parse_error(chars_read, number_string, parse_error::create(115, chars_read, exception_message(input_format_t::ubjson, "invalid number title: " + number_lexer.get_token_string(), "high-precision number")));
         }
 
         switch (result_number)
@@ -2231,7 +2231,7 @@ class binary_reader
             case token_type::value_float:
                 return sax->number_float(number_lexer.get_number_float(), std::move(number_string));
             default:
-                return sax->parse_error(chars_read, number_string, parse_error::create(115, chars_read, exception_message(input_format_t::ubjson, "invalid number text: " + number_lexer.get_token_string(), "high-precision number")));
+                return sax->parse_error(chars_read, number_string, parse_error::create(115, chars_read, exception_message(input_format_t::ubjson, "invalid number title: " + number_lexer.get_token_string(), "high-precision number")));
         }
     }
 

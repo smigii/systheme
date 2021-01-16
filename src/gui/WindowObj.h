@@ -11,16 +11,13 @@
 
 class WindowObj {
 private:
-	std::string text;
+	std::string title;
 	WINDOW* win;
 
 public:
-	WindowObj(std::string text);
-
+	explicit WindowObj(std::string text);
 	WindowObj(std::string text, WINDOW* &win);
-	WindowObj(const WindowObj &wo);
-//	WindowObj(WindowObj &&wo);
-//	WindowObj& operator=(WindowObj&& wo);
+//	WindowObj(const WindowObj &wo);
 
 	WINDOW* get_win();
 
@@ -28,6 +25,9 @@ public:
 
 	void print_text();
 	void print_text(std::string t);
+
+	void set_title(std::string);
+	void print_title();
 
 	void select();
 	void deselect();

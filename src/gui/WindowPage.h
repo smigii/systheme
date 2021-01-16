@@ -30,6 +30,11 @@ public:
 	void draw_pane(int pane);
 	void draw_all();
 
+	WindowObj* seek(int start_x, int start_y, int inc_x, int inc_y);
+	void mv_r();
+	void mv_l();
+	void mv_u();
+	void mv_d();
 
 };
 

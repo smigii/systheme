@@ -1252,7 +1252,7 @@ class basic_json
     /*!
     @brief per-element parser callback type
 
-    With a parser callback function, the result of parsing a JSON text can be
+    With a parser callback function, the result of parsing a JSON title can be
     influenced. When passed to @ref parse, it is called on certain events
     (passed as @ref parse_event_t via parameter @a event) with a set recursion
     depth @a depth and context JSON value @a parsed. The return value of the

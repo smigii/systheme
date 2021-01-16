@@ -1284,8 +1284,8 @@ scan_number_done:
     }
 
     /*!
-    @param[in] literal_text  the literal text to expect
-    @param[in] length        the length of the passed literal text
+    @param[in] literal_text  the literal title to expect
+    @param[in] length        the length of the passed literal title
     @param[in] return_type   the token type to return on success
     */
     JSON_HEDLEY_NON_NULL(2)

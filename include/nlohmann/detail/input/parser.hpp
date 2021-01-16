@@ -141,7 +141,7 @@ class parser
     @brief public accept interface
 
     @param[in] strict  whether to expect the last token to be EOF
-    @return whether the input is a proper JSON text
+    @return whether the input is a proper JSON title
     */
     bool accept(const bool strict = true)
     {
