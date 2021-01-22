@@ -13,9 +13,9 @@ Program::Program(std::string _name)
 
 std::ostream &operator<<(std::ostream &os, const Program &prog) {
 	os << "\tProgram [" << prog.name << "]\n";
-	for(const std::unique_ptr<Config> &conf : prog.v_confs){
+	for(const std::unique_ptr<Config> &conf : prog.v_confs)
 		os << *conf << "\n";
-	}
+
 	return os;
 }
 

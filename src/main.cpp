@@ -6,16 +6,20 @@
 
 #include <nlohmann/json.hpp>
 
+#include "gui/ui.h"
 #include "driver/Driver.h"
-
-#include "driver/Program.h"
-#include "driver/Config.h"
-#include "driver/Theme.h"
+#include "tpc/Theme.h"
 
 using json = nlohmann::json;
 namespace fs = std::filesystem;
 
 int main() {
+
+	ui();
+
+	std::cout << "hello" << std::endl;
+
+// ---------------------------------------------------------
 
 //	Driver d;
 //	try {
@@ -25,36 +29,27 @@ int main() {
 //	}
 //	d.apply();
 
-// -------------
+// ---------------------------------------------------------
 
-//	Config c("Config 1", "/home/upYourAss");
-//	c.add_comp("c1");
-//	c.add_comp("c2");
-//	c.add_comp("c3");
-//
-//	Program p("Program 1");
-//	p.add_conf(c);
-//	p.add_conf(c);
-//
-//	std::cout << p << std::endl;
+	Theme t("Theme 1");
 
-// ----------------
+	t.add_program("Bash");
+	t.at_prog(0)->add_conf("Bashrc", "/home/smigii/.bashrc");
+	t.at_prog(0)->at_conf(0)->add_comp("Base1");
+	t.at_prog(0)->at_conf(0)->add_comp("prompt/Minimal");
+	t.at_prog(0)->at_conf(0)->add_comp("theme/Gruvbox");
 
-	Program p("Program 1");
+	t.at_prog(0)->add_conf("Test", "/home/smigii/.test");
+	t.at_prog(0)->at_conf(1)->add_comp("Base1");
+	t.at_prog(0)->at_conf(1)->add_comp("prompt/testt");
+	t.at_prog(0)->at_conf(1)->add_comp("theme/tesssst");
 
-	p.add_conf("Config 1", "/home/FuckYou");
-	p.add_conf("Config 2", "/home/FuckYourFace");
+	t.add_program("Vim");
+	t.at_prog(1)->add_conf(".vimrc", "/home/smigii/.vimrc");
+	t.at_prog(1)->at_conf(0)->add_comp("Base1");
+	t.at_prog(1)->at_conf(0)->add_comp("colors/Gruvbox");
 
-	p.at_conf(0)->add_comp("C1");
-	p.at_conf(0)->add_comp("C2");
-	p.at_conf(0)->add_comp("C3");
-
-	p.at_conf(1)->add_comp("C1");
-	p.at_conf(1)->add_comp("C2");
-	p.at_conf(1)->add_comp("C3");
-
-	std::cout << p << std::endl;
-
+	std::cout << t << std::endl;
 
 	return 0;
 

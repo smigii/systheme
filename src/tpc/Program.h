@@ -20,7 +20,7 @@ private:
 public:
 	Program(std::string _name);
 
-	friend std::ostream& operator<<(std::ostream& os, const Program &prog) ;
+	friend std::ostream& operator<<(std::ostream& os, const Program &prog);
 
 	std::string get_name() const;
 
