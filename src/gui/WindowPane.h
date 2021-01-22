@@ -14,7 +14,7 @@ class WindowPane {
 private:
 	int start_y, start_x, size_y, size_x, num_y, num_x;
 	std::vector<std::string> vec_text;
-	std::vector<std::vector<WindowObj>> pane;
+	std::vector<std::vector<WindowObj>> vec_win_obj;
 
 	bool test2;
 
@@ -29,9 +29,6 @@ public:
 	void draw();
 
 	WindowObj* get_win(int y, int x);
-
-	void select_at(int y, int x);
-	void deselect_at(int y, int x);
 
 	void set_titles(int h_align, std::vector<std::string> vec_titles);
 

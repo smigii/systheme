@@ -14,23 +14,21 @@ private:
 	std::string title;
 	WINDOW* win;
 
+	int h_align;	// -1 L ; 0 C ; 1 R //
+
 public:
 	explicit WindowObj(std::string text);
 	WindowObj(std::string text, WINDOW* &win);
-//	WindowObj(const WindowObj &wo);
+	WindowObj(std::string text, WINDOW* &win, int h_align);
 
 	WINDOW* get_win();
 
 	void enbox();
 
-	void print_text();
-	void print_text(std::string t);
+	void set_h_align(int h);
 
 	void set_title(std::string);
 	void print_title();
-
-	void select();
-	void deselect();
 
 };
 

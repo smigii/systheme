@@ -7,17 +7,14 @@
 #include <utility>
 
 WindowObj::WindowObj(std::string _text)
-: title{std::move(_text)}, win{nullptr} {
-
+: title{std::move(_text)}, win{nullptr}, h_align{0} {
 }
 WindowObj::WindowObj(std::string _text, WINDOW* &_win)
-	: title{std::move(_text)}, win{_win} {
-
+	: title{std::move(_text)}, win{_win}, h_align{0} {
 }
-//WindowObj::WindowObj(const WindowObj &wo) {
-//	title = wo.title;
-//	win = wo.win;
-//}
+WindowObj::WindowObj(std::string _text, WINDOW* &_win, int _h_align)
+	: title{std::move(_text)}, win{_win}, h_align{_h_align} {
+}
 
 WINDOW *WindowObj::get_win() {
 	return win;
@@ -28,36 +25,8 @@ void WindowObj::enbox() {
 	wrefresh(win);
 }
 
-void WindowObj::print_text() {
-	print_text(title);
-}
-
-void WindowObj::print_text(std::string t) {
-	int maxx, maxy, x, y;
-
-	getmaxyx(win, maxy, maxx);
-
-	int text_offset = t.size()/2;
-
-	x = maxx/2 - text_offset;
-	y = maxy/2;
-
-	mvwprintw(win, y, x, t.c_str());
-	wrefresh(win);
-}
-
-void WindowObj::select() {
-	wattron(win, A_REVERSE);
-	print_text("> " + title + " <");
-	wattroff(win, A_REVERSE);
-}
-
-void WindowObj::deselect() {
-	std::string space = "";
-	for(int i = 0; i < title.size() + 4; i++)
-		space += " ";
-
-	print_text(space);
+void WindowObj::set_h_align(int h) {
+	h_align = h;
 }
 
 void WindowObj::set_title(std::string t) {
@@ -66,9 +35,22 @@ void WindowObj::set_title(std::string t) {
 
 void WindowObj::print_title() {
 	int xmax = getmaxx(win);
-	int x = xmax/2 - title.size()/2;
+	int x;
+	switch(h_align){
+		case -1:
+			x = 1;
+			break;
+		case 0:
+			x = xmax/2 - title.size()/2;
+			break;
+		case 1:
+			x = xmax - 1 - title.size();
+	}
+
 	mvwprintw(win, 1, x, title.c_str());
+	wrefresh(win);
 	mvwhline(win, 2, 1, ACS_HLINE, xmax - 2);
+	wrefresh(win);
 }
 
 

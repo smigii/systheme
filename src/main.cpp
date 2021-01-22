@@ -2,82 +2,86 @@
 #include <vector>
 #include <string>
 #include <fstream>
-#include <curses.h>
 #include <filesystem>
-
-#include "driver/Driver.h"
-
-#include "gui/WindowPage.h"
-#include "gui/WindowPane.h"
-#include "gui/WindowObj.h"
 
 #include <nlohmann/json.hpp>
 
-#define H_LFT -1
-#define H_CNT 0
-#define H_RGT 1
-#define V_TOP 1
-#define V_CNT 0
-#define V_BTM -1
+#include "driver/driver.h"
 
-
+using json = nlohmann::json;
 namespace fs = std::filesystem;
 
 int main() {
 
-	initscr();
-	curs_set(0);
-	start_color();
-	init_pair(1, COLOR_BLUE, COLOR_RED);
-
-	int XMAX, YMAX;
-	getmaxyx(stdscr, YMAX, XMAX);
-
-	// Pages
-	WindowPage page_home	= WindowPage();
-	WindowPage page_create	= WindowPage();
-
-	// Panes
-	WindowPane pane_home_main		= WindowPane(YMAX / 4, XMAX / 5, YMAX / 2, 3 * XMAX / 5, 1, 1);
-	WindowPane pane_create_ranger	= WindowPane(0, 0, 4 * YMAX / 5, XMAX, 1, 4);
-	WindowPane pane_create_output	= WindowPane(4 * YMAX / 5, 0, YMAX / 5, XMAX, 1, 1);
-
-	// Window Init
-	page_home.add_pane(&pane_home_main);
-	page_create.add_pane(&pane_create_output);
-	page_create.add_pane(&pane_create_ranger);
-
-	page_home.draw_all();
-	getch();
-
-	clear();
-	page_create.draw_all();
-	getch();
-
-//	char choice = getch();
-//	while(choice != 'q'){
-//		switch(choice){
-//			case 'h':
-//				wpn_home.select_at(0, 0);
-//				break;
-//			case 'j':
-//				wpn_home.select_at(0, 1);
-//				break;
-//			case 'k':
-//				wpn_home.select_at(1, 0);
-//				break;
-//			case 'l':
-//				wpn_home.select_at(1, 1);
-//				break;
-//		}
-//		choice = getch();
-//	}
+	try{
+		driver d;
+	} catch(std::string &e) {
+		std::cout << e << std::endl;
+	}
 
 
-	getch();
-	endwin();
+	/*
+	std::string root = "/home/smigii/.config/systheme/";
+
+	// Print out list of themes
+	std::vector<std::string> vec_themes;
+
+	int i = 1;
+	std::cout << "Please enter a theme to use:" << std::endl;
+	for(const fs::directory_entry &entry : fs::directory_iterator(root + "themes/")){
+		std::string theme_i = entry.path().filename().string();
+		std::cout << i << ". " << theme_i << std::endl;
+		vec_themes.push_back(theme_i);
+		i++;
+	}
+
+	// Get user input
+	std::cout << "Enter a choice between 1 and " << vec_themes.size() << ": ";
+	int choice {-1};
+	while(choice <= 0 || choice > vec_themes.size()){
+		std::cin >> choice;
+	}
+	std::cout << "[" << vec_themes.at(choice - 1) << "]" << " selected." << std::endl;
+
+	std::ifstream ifs(root + "themes/" + vec_themes.at(choice - 1));
+	json jtheme;
+	ifs >> jtheme;
+
+	// Now we build
+	std::cout << "\n========== SYSTHEME 0.0.1 ==========\n";
+	// Loop through the program layer...
+	for(const auto &prog : jtheme){
+		std::cout << "Building program [" << std::string(prog["name"]) << "]" << std::endl;
+		for(const auto &conf : prog["configs"]){
+			// Loop through the config file layer...
+			std::cout << "\tBuilding config [" << std::string(conf["name"]) << "]" << std::endl;
+
+			std::string o_path {conf["dest"]};
+
+			std::ofstream trunc(o_path, std::ios::out | std::ios::trunc);
+			trunc.close();
+
+			std::ofstream ofile(o_path, std::ios::out | std::ios::app);
+			std::string i_path {root + "data/" + std::string(prog["name"]) + "/" + std::string(conf["name"]) + "/" };
+
+			std::cout << "\t\tConfig location: " + o_path << std::endl;
+
+			for(const auto &comp : conf["components"]){
+				std::cout << "\t\tAppending file [" << i_path+std::string(comp) << "]" << std::endl;
+				ofile << "\n\n";
+				std::ifstream ifile(i_path + std::string(comp));
+				ofile << ifile.rdbuf();
+				ifile.close();
+			}
+			ofile.close();
+			std::cout << "\t\tFinished config [" << std::string(conf["name"]) << "]" << std::endl;
+		}
+		std::cout << "\tFinished building program [" << std::string(prog["name"]) << "]" << std::endl;
+	}
+	 */
 
 	return 0;
+
 }
 
 

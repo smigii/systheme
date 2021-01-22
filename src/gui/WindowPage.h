@@ -19,8 +19,8 @@ public:
 	WindowPage();
 	WindowPage(std::vector<WindowPane*> _vec_pane);
 
-	void set_active(int pane, int y, int x);
-	void set_active(WindowObj* wo_ptr);
+//	void set_active(int vec_win_obj, int y, int x);
+//	void set_active(WindowObj* wo_ptr);
 
 	void add_pane(WindowPane* wpn);
 
