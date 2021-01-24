@@ -2,11 +2,11 @@
 // Created by smigii on 2021-01-12.
 //
 
-#include "WindowPane.h"
+#include "WPane.h"
 
 #include <iostream>
 
-WindowPane::WindowPane(int sty, int stx, int siy, int six, int ny, int nx)
+WPane::WPane(int sty, int stx, int siy, int six, int ny, int nx)
 	: start_y{sty}, start_x{stx}, size_y{siy}, size_x{six}, num_y{ny}, num_x{nx} {
 	vec_text = std::vector<std::string>();
 	for(int i = 0; i < ny; i++){
@@ -16,12 +16,12 @@ WindowPane::WindowPane(int sty, int stx, int siy, int six, int ny, int nx)
 	}
 	build();
 }
-WindowPane::WindowPane(int sty, int stx, int siy, int six, int ny, int nx, std::vector<std::string> text)
+WPane::WPane(int sty, int stx, int siy, int six, int ny, int nx, std::vector<std::string> text)
 : start_y{sty}, start_x{stx}, size_y{siy}, size_x{six}, num_y{ny}, num_x{nx}, vec_text{text} {
 	build();
 }
 
-WindowPane::WindowPane(const WindowPane &wp) {
+WPane::WPane(const WPane &wp) {
 	start_y = wp.start_y;
 	start_x = wp.start_x;
 	size_y = wp.size_y;
@@ -36,7 +36,7 @@ WindowPane::WindowPane(const WindowPane &wp) {
 
 	std::cout << "copy const" << std::endl;
 }
-//WindowPane::WindowPane(WindowPane &&wp) {
+//WPane::WPane(WPane &&wp) {
 //	start_y = wp.start_y;
 //	start_x = wp.start_x;
 //	size_y = wp.size_y;
@@ -47,7 +47,7 @@ WindowPane::WindowPane(const WindowPane &wp) {
 //	vec_text = wp.vec_text;
 //	vec_win_obj = wp.vec_win_obj;
 //}
-//WindowPane& WindowPane::operator=(WindowPane &&wp){
+//WPane& WPane::operator=(WPane &&wp){
 //	start_y = wp.start_y;
 //	start_x = wp.start_x;
 //	size_y = wp.size_y;
@@ -61,7 +61,7 @@ WindowPane::WindowPane(const WindowPane &wp) {
 //	return *this;
 //}
 
-void WindowPane::build() {
+void WPane::build() {
 //	if(vec_text.size() != num_y * num_x)
 //		return;
 
@@ -82,11 +82,11 @@ void WindowPane::build() {
 	}
 
 	for(int y = 0; y < y_vals.size(); y++){
-		vec_win_obj.push_back(std::vector<WindowObj>());
+		vec_win_obj.push_back(std::vector<WObj>());
 		for(int x = 0; x < x_vals.size(); x++){
 			WINDOW* temp_win = newwin(cell_yheight, cell_xheight, y_vals.at(y), x_vals.at(x));
 			std::string temp_text = vec_text.at(y*num_x + x);
-			vec_win_obj.at(y).push_back(WindowObj(temp_text, temp_win));
+			vec_win_obj.at(y).push_back(WObj(temp_text, temp_win));
 		}
 	}
 
@@ -95,7 +95,7 @@ void WindowPane::build() {
 	refresh();
 }
 
-void WindowPane::draw() {
+void WPane::draw() {
 //	erase();
 	for(int y = 0; y < vec_win_obj.size(); y++){
 		for(int x = 0; x < vec_win_obj.at(0).size(); x++){
@@ -107,18 +107,18 @@ void WindowPane::draw() {
 	}
 }
 
-WindowObj* WindowPane::get_win(int y, int x) {
+WObj* WPane::get_win(int y, int x) {
 	return &vec_win_obj.at(y).at(x);
 }
 
-//void WindowPane::select_at(int y, int x) {
+//void WPane::select_at(int y, int x) {
 //	vec_win_obj.at(y).at(x).select();
 //}
-//void WindowPane::deselect_at(int y, int x) {
+//void WPane::deselect_at(int y, int x) {
 //	vec_win_obj.at(y).at(x).deselect();
 //}
 
-void WindowPane::set_titles(int h_align, std::vector<std::string> titles) {
+void WPane::set_titles(int h_align, std::vector<std::string> titles) {
 	for(int y = 0; y < vec_win_obj.size(); y++){
 		for(int x = 0; x < vec_win_obj.at(y).size(); x++){
 			vec_win_obj.at(y).at(x).set_title(titles.at(y * num_x + x));
@@ -127,6 +127,6 @@ void WindowPane::set_titles(int h_align, std::vector<std::string> titles) {
 	}
 }
 
-void WindowPane::test(){
+void WPane::test(){
 	test2 = true;
 }

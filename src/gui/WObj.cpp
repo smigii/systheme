@@ -2,38 +2,38 @@
 // Created by smigii on 2021-01-12.
 //
 
-#include "WindowObj.h"
+#include "WObj.h"
 
 #include <utility>
 
-WindowObj::WindowObj(std::string _text)
+WObj::WObj(std::string _text)
 : title{std::move(_text)}, win{nullptr}, h_align{0} {
 }
-WindowObj::WindowObj(std::string _text, WINDOW* &_win)
+WObj::WObj(std::string _text, WINDOW* &_win)
 	: title{std::move(_text)}, win{_win}, h_align{0} {
 }
-WindowObj::WindowObj(std::string _text, WINDOW* &_win, int _h_align)
+WObj::WObj(std::string _text, WINDOW* &_win, int _h_align)
 	: title{std::move(_text)}, win{_win}, h_align{_h_align} {
 }
 
-WINDOW *WindowObj::get_win() {
+WINDOW *WObj::get_win() {
 	return win;
 }
 
-void WindowObj::enbox() {
+void WObj::enbox() {
 	box(win, 0, 0);
 	wrefresh(win);
 }
 
-void WindowObj::set_h_align(int h) {
+void WObj::set_h_align(int h) {
 	h_align = h;
 }
 
-void WindowObj::set_title(std::string t) {
+void WObj::set_title(std::string t) {
 	title = t;
 }
 
-void WindowObj::print_title() {
+void WObj::print_title() {
 	int xmax = getmaxx(win);
 	int x;
 	switch(h_align){

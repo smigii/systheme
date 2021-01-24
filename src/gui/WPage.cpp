@@ -2,28 +2,28 @@
 // Created by smigii on 2021-01-12.
 //
 
-#include "WindowPage.h"
+#include "WPage.h"
 
-WindowPage::WindowPage() {
+WPage::WPage() {
 	active_win = nullptr;
 }
-WindowPage::WindowPage(std::vector<WindowPane*> _vec_pane) {
+WPage::WPage(std::vector<WPane*> _vec_pane) {
 	vec_pane = _vec_pane;
 
 //	set_active(0, 0, 0);
 }
 
-//void WindowPage::set_active(int vec_win_obj, int y, int x) {
+//void WPage::set_active(int vec_win_obj, int y, int x) {
 //	if(active_win)
 //		active_win->deselect();
 //
 //	vec_pane.at(vec_win_obj)->select_at(y, x);
 //}
-//void WindowPage::set_active(WindowObj *wo_ptr) {
+//void WPage::set_active(WObj *wo_ptr) {
 //	active_win = wo_ptr;
 //}
 
-void WindowPage::add_pane(WindowPane* wp) {
+void WPage::add_pane(WPane* wp) {
 	vec_pane.push_back(wp);
 	wp->build();
 
@@ -32,28 +32,28 @@ void WindowPage::add_pane(WindowPane* wp) {
 //	}
 }
 
-void WindowPage::draw_pane(int pane) {
+void WPage::draw_pane(int pane) {
 	vec_pane.at(pane)->build();
 	vec_pane.at(pane)->draw();
 }
-void WindowPage::draw_all() {
-	for(WindowPane* wpn : vec_pane){
+void WPage::draw_all() {
+	for(WPane* wpn : vec_pane){
 		wpn->build();
 		wpn->draw();
 	}
 }
 
-void WindowPage::build_pane(int pane) {
+void WPage::build_pane(int pane) {
 	vec_pane.at(pane)->build();
 }
-void WindowPage::build_all() {
-	for(WindowPane* wpn : vec_pane){
+void WPage::build_all() {
+	for(WPane* wpn : vec_pane){
 		wpn->build();
 		wpn->test();
 	}
 }
 
-WindowObj* WindowPage::seek(int start_x, int start_y, int inc_x, int inc_y) {
+WObj* WPage::seek(int start_x, int start_y, int inc_x, int inc_y) {
 	int x {start_x};
 	int y {start_y};
 
@@ -70,15 +70,15 @@ WindowObj* WindowPage::seek(int start_x, int start_y, int inc_x, int inc_y) {
 
 	return nullptr;
 }
-void WindowPage::mv_r() {
+void WPage::mv_r() {
 
 }
-void WindowPage::mv_l() {
+void WPage::mv_l() {
 
 }
-void WindowPage::mv_u() {
+void WPage::mv_u() {
 
 }
-void WindowPage::mv_d() {
+void WPage::mv_d() {
 
 }

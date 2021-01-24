@@ -24,7 +24,7 @@ public:
 	std::string get_name() const;
 
 	std::unique_ptr<Program>& at_prog(int i) const;
-	void add_program(std::string _name);
+	void add_prog(std::string _name);
 };
 
 

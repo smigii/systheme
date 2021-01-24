@@ -2,14 +2,14 @@
 // Created by smigii on 2021-01-12.
 //
 
-#ifndef SYSTHEME_WINDOWOBJ_H
-#define SYSTHEME_WINDOWOBJ_H
+#ifndef SYSTHEME_WOBJ_H
+#define SYSTHEME_WOBJ_H
 
 #include <vector>
 #include <string>
 #include <ncurses.h>
 
-class WindowObj {
+class WObj {
 private:
 	std::string title;
 	WINDOW* win;
@@ -17,9 +17,9 @@ private:
 	int h_align;	// -1 L ; 0 C ; 1 R //
 
 public:
-	explicit WindowObj(std::string text);
-	WindowObj(std::string text, WINDOW* &win);
-	WindowObj(std::string text, WINDOW* &win, int h_align);
+	explicit WObj(std::string text);
+	WObj(std::string text, WINDOW* &win);
+	WObj(std::string text, WINDOW* &win, int h_align);
 
 	WINDOW* get_win();
 
@@ -33,4 +33,4 @@ public:
 };
 
 
-#endif //SYSTHEME_WINDOWOBJ_H
+#endif //SYSTHEME_WOBJ_H

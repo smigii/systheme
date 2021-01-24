@@ -7,7 +7,6 @@
 
 #include <string>
 #include <vector>
-#include <ostream>
 #include <memory>
 
 #include "Config.h"

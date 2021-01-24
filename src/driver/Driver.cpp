@@ -20,6 +20,8 @@
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
+#include "../helper/vec_sort.h"
+
 namespace fs = std::filesystem;
 
 Driver::Driver()
