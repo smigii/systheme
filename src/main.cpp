@@ -7,24 +7,22 @@
 
 #include <nlohmann/json.hpp>
 
-#define MAX_USER_LEN 16
+/*
+ * SHIT TO ADD
+ *     - Some kind of auto backup directory in .config/systheme
+ *     - Individual level setting
+ *       (i.e. set prompt without changing anything else)
+ *     - Command line options
+ *           - verbosity
+ *           - debug mode
+ */
 
 using json = nlohmann::json;
 namespace fs = std::filesystem;
 
-/*
- * 1. Get user ~ path
- * 2. Check if ~/.config/systheme exists
- *        - If not, prompt to create
- * 3. Get input...
- *        - CLA
- *        - Prompt
- * 3. Apply
- */
-
 // === PROTO =============================================================
 
-std::string get_home();
+
 
 // =======================================================================
 
@@ -41,7 +39,7 @@ int main(int argc, char* argv[]) {
 	st_path += getlogin();
 	st_path += "/.config/systheme/";
 
-	std::cout << st_path << "\n";
+	std::cout << "SYSTHEME 0.0.1\n\n";
 
 	if(!fs::is_directory(st_path)){
 		std::cout << "Please create the ~/.config/systheme directory.\n";
@@ -55,7 +53,6 @@ int main(int argc, char* argv[]) {
 		th_path += ".json";
 
 		std::cout << "SELECTED THEME [" << argv[1] << "]\n";
-		std::cout << "PATH [" << th_path << "]\n";
 
 		std::ifstream ifs(th_path);
 		if(ifs.good()){
@@ -71,13 +68,13 @@ int main(int argc, char* argv[]) {
 
 	std::string p1, p2, p3;
 	for(const auto & prog : json){
-		std::cout << "PROGRAM [" << prog["name"] << "]\n";
+		std::cout << "\nProgram [" << prog["name"] << "]...\n";
 		p1 = st_path + "data/";
 		p1 += prog["name"];
 		p1 += "/";
 
 		for(const auto & config : prog["configs"]){
-			std::cout << "\tCONFIG [" << config["name"] << "]\n";
+			std::cout << "\tOverwriting [" << config["name"] << "]...\n";
 
 			p2 = p1;
 			p2 += config["name"];
@@ -89,12 +86,11 @@ int main(int argc, char* argv[]) {
 			ofs_write.open(tmp_path, std::ios::out | std::ios::app);
 
 			for(const auto & component : config["components"]){
-				std::cout << "\t\tCOMPONENT [" << component << "]\n";
+				std::cout << "\t\tAdding component [" << component << "]...\n";
 
 				p3 = p2;
 				p3 += component;
 
-				std::cout << "\t\t" << p3 << "\n";
 				ifs_comp.open(p3);
 				ofs_write << ifs_comp.rdbuf();
 				ifs_comp.close();
@@ -102,6 +98,15 @@ int main(int argc, char* argv[]) {
 			ofs_write.close();
 		}
 	}
+
+	std::cout << "\nDone building theme [" << argv[1] << "]\n";
+
+	// This isn't the WORST thing in the world
+	// since none of the users input ends up
+	// here, but fuck the system()
+	std::cout << "\ncalling refresh.sh\n";
+	std::string refresh_cmd = st_path + "refresh.sh";
+	system(refresh_cmd.c_str());
 
 	return 0;
 
