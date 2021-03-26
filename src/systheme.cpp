@@ -26,6 +26,44 @@ namespace fs = std::filesystem;
 
 // =======================================================================
 
+class User {
+private:
+	std::string name;
+	std::string root;
+
+	std::string prog;
+	std::string conf;
+	std::string comp;
+
+	std::string path;
+
+public:
+	User(){
+		name = getlogin();
+		root = "/home/" + name + "/";
+	}
+
+	std::string get_name(){
+		return name;
+	}
+
+	std::string get_root(){
+		return root;
+	}
+
+	std::string convert_rel_path(std::string path){
+		if(path.at(0) == '~'){
+			std::string new_path = root;
+			std::string p2 = path.substr(2);
+			new_path += p2;
+			return new_path;
+		} else {
+			return path;
+		}
+	}
+
+};
+
 int main(int argc, char* argv[]) {
 
 	json json;
@@ -35,11 +73,10 @@ int main(int argc, char* argv[]) {
 	std::ifstream ifs_comp;
 	std::ofstream ofs_write;
 
-	st_path = "/home/";
-	st_path += getlogin();
-	st_path += "/.config/systheme/";
+	User usr = User();
+	st_path += usr.get_root() + "/.config/systheme/";
 
-	std::cout << "SYSTHEME 0.0.1\n\n";
+	std::cout << "SYSTHEME 0.0.2\n\n";
 
 	if(!fs::is_directory(st_path)){
 		std::cout << "Please create the ~/.config/systheme directory.\n";
@@ -81,6 +118,8 @@ int main(int argc, char* argv[]) {
 			p2 += "/";
 
 			std::string tmp_path = config["dest"];
+			tmp_path = usr.convert_rel_path(tmp_path);
+
 			ofs_write.open(tmp_path, std::ios::trunc);
 			ofs_write.close();
 			ofs_write.open(tmp_path, std::ios::out | std::ios::app);
