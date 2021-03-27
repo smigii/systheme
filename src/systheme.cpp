@@ -1,5 +1,6 @@
 #include <iostream>
 #include <unistd.h>
+#include <utility>
 #include <vector>
 #include <string>
 #include <fstream>
@@ -20,6 +21,12 @@
 using json = nlohmann::json;
 namespace fs = std::filesystem;
 
+// === TD & E =============================================================
+
+
+
+// =======================================================================
+
 // === PROTO =============================================================
 
 
@@ -30,12 +37,6 @@ class User {
 private:
 	std::string name;
 	std::string root;
-
-	std::string prog;
-	std::string conf;
-	std::string comp;
-
-	std::string path;
 
 public:
 	User(){
@@ -51,7 +52,11 @@ public:
 		return root;
 	}
 
-	std::string convert_rel_path(std::string path){
+	std::string get_st_root(){
+		return root + ".config/systheme/";
+	}
+
+	std::string handle_rel_path(std::string path){
 		if(path.at(0) == '~'){
 			std::string new_path = root;
 			std::string p2 = path.substr(2);
@@ -62,7 +67,64 @@ public:
 		}
 	}
 
+	in x;
+
 };
+
+class PCC {
+private:
+	std::string prog;
+	std::string conf;
+
+public:
+	void set_prog(std::string _prog) {
+		this->prog = std::move(_prog);
+		conf = nullptr;
+	}
+
+	void set_conf(std::string _conf){
+		this->conf = std::move(_conf);
+	}
+
+	void apply_theme(const json& _json, User usr){
+
+		std::ifstream ifs_comp;
+		std::ofstream ofs_write;
+
+		for(const auto & program : _json){
+
+			set_prog(program["name"]);
+			std::cout << "\nProgram [" << this->prog << "]...\n";
+
+			for(const auto & config : program["configs"]){
+				set_conf(config["name"]);
+				std::cout << "\tOverwriting [" << this->conf << "]...\n";
+
+				std::string tmp_path = config["dest"];
+				tmp_path = usr.handle_rel_path(tmp_path);
+
+				ofs_write.open(tmp_path, std::ios::trunc);
+				ofs_write.close();
+				ofs_write.open(tmp_path, std::ios::out | std::ios::app);
+
+				for(const auto & component : config["components"]){
+					std::cout << "\t\tAdding component [" << component << "]...\n";
+
+					std::string path = usr.get_st_root() + "data/" + prog + "/" + conf + "/" + component;
+
+					ifs_comp.open(path);
+					ofs_write << ifs_comp.rdbuf();
+					ifs_comp.close();
+				}
+				ofs_write.close();
+			}
+		}
+	}
+};
+
+
+
+// === MAIN ==============================================================
 
 int main(int argc, char* argv[]) {
 
@@ -74,16 +136,13 @@ int main(int argc, char* argv[]) {
 	std::ofstream ofs_write;
 
 	User usr = User();
-	st_path += usr.get_root() + "/.config/systheme/";
 
-	std::cout << "SYSTHEME 0.0.2\n\n";
+	std::cout << "SYSTHEME 0.0.3\n\n";
 
-	if(!fs::is_directory(st_path)){
+	if(!fs::is_directory(usr.get_st_root())){
 		std::cout << "Please create the ~/.config/systheme directory.\n";
 		return -1;
 	}
-
-	th_path = st_path + "themes/";
 
 	if(argc == 2){
 		th_path += argv[1];
@@ -91,52 +150,17 @@ int main(int argc, char* argv[]) {
 
 		std::cout << "SELECTED THEME [" << argv[1] << "]\n";
 
-		std::ifstream ifs(th_path);
+		std::ifstream ifs(usr.get_st_root() + "themes/");
 		if(ifs.good()){
 			ifs >> json;
 		} else {
 			std::cout << "INVALID FILE\n";
 		}
 	} else {
-		std::cout << "FUCK YOU\n";
+		std::cout << "NO FUCK YOU\n";
 		return -1;
 	}
 
-
-	std::string p1, p2, p3;
-	for(const auto & prog : json){
-		std::cout << "\nProgram [" << prog["name"] << "]...\n";
-		p1 = st_path + "data/";
-		p1 += prog["name"];
-		p1 += "/";
-
-		for(const auto & config : prog["configs"]){
-			std::cout << "\tOverwriting [" << config["name"] << "]...\n";
-
-			p2 = p1;
-			p2 += config["name"];
-			p2 += "/";
-
-			std::string tmp_path = config["dest"];
-			tmp_path = usr.convert_rel_path(tmp_path);
-
-			ofs_write.open(tmp_path, std::ios::trunc);
-			ofs_write.close();
-			ofs_write.open(tmp_path, std::ios::out | std::ios::app);
-
-			for(const auto & component : config["components"]){
-				std::cout << "\t\tAdding component [" << component << "]...\n";
-
-				p3 = p2;
-				p3 += component;
-
-				ifs_comp.open(p3);
-				ofs_write << ifs_comp.rdbuf();
-				ifs_comp.close();
-			}
-			ofs_write.close();
-		}
-	}
 
 	std::cout << "\nDone building theme [" << argv[1] << "]\n";
 
