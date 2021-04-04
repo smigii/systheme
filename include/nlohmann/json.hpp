@@ -8212,7 +8212,7 @@ class basic_json
         // wrapper for "add" operation; add value at ptr
         const auto operation_add = [&result](json_pointer & ptr, basic_json val)
         {
-            // adding to the root of the target document means replacing it
+            // adding to the home_path of the target document means replacing it
             if (ptr.empty())
             {
                 result = val;

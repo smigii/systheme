@@ -208,8 +208,8 @@ class json_pointer
     /*!
     @brief returns the parent of this JSON pointer
 
-    @return parent of this JSON pointer; in case this JSON pointer is the root,
-            the root itself is returned
+    @return parent of this JSON pointer; in case this JSON pointer is the home_path,
+            the home_path itself is returned
 
     @complexity Linear in the length of the JSON pointer.
 
@@ -301,9 +301,9 @@ class json_pointer
     }
 
     /*!
-    @brief return whether pointer points to the root document
+    @brief return whether pointer points to the home_path document
 
-    @return true iff the JSON pointer points to the root document
+    @return true iff the JSON pointer points to the home_path document
 
     @complexity Constant.
 

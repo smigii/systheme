@@ -20,7 +20,7 @@ void test_user(){
 	try {
 
 		const User user = User();
-		std::cout << user.get_st_root() << "\n";
+		std::cout << user.get_st_path() << "\n";
 
 	} catch(const NoConfigDirException& e) {
 
@@ -37,7 +37,7 @@ void test_opts(){
 		char* argv[] = {"__NAME__", "gruvbox.json", "-svqbch"};
 
 		const User user = User();
-		const Opts opts = Opts(argc, argv, user.get_st_root());
+		const Opts opts = Opts(argc, argv, user.get_st_path());
 
 	} catch(const InvalidThemeException& e) {
 

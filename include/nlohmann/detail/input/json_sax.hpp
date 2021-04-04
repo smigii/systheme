@@ -279,7 +279,7 @@ class json_sax_dom_parser
   private:
     /*!
     @invariant If the ref stack is empty, then the passed value will be the new
-               root.
+               home_path.
     @invariant If the ref stack contains a value, then it is an array or an
                object to which we can add elements
     */
@@ -524,7 +524,7 @@ class json_sax_dom_callback_parser
                callback function with an empty array or object, respectively.
 
     @invariant If the ref stack is empty, then the passed value will be the new
-               root.
+               home_path.
     @invariant If the ref stack contains a value, then it is an array or an
                object to which we can add elements
 
