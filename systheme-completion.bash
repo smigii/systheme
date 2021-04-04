@@ -6,7 +6,7 @@ _systheme_completions(){
 
 	COMPREPLY=()
 
-	if [ $COMP_CWORD -eq 1 ]; then
+	if [ $COMP_CWORD -lt 2 ]; then
 
 		COMPREPLY=($(compgen -W "$(ls ~/.config/systheme/themes)" "${COMP_WORDS[COMP_CWORD]}"))
 
