@@ -1,16 +1,10 @@
 1. Want to be able to add CLA
-	* [THEME]
-	* -v verbose        Print out progress
-	* -b backup         Backup any overwritten files in str/tmp directory
-	* -c config         Change a single config for a single program (i.e change prompt)
-	* --version
-	* --help
+	* systheme [THEME] [FLAGS]
+	* -s simulation     Simulation mode, no files are overwritten, turns on verbose.
+	* -v verbose        Print out progress report.
+	* -q quiet          Surpress all output.
+	* -b backup         Backup any overwritten files in ~/.systheme_backups directory
+	* -c confirm        Prompt user for confirmation before each file is overwritten
+	* -h
 
-2. Want to add a config file for default values of above options.
-	* Default verbosity [1/0]
-	* Default backup [1/0]
-	* If default backup 1, max num backups [int]
-
-3. Figure out how to do autocompletion
-
-3. MAYBE add some kind of gui? idk
+2. Add autocompletion script

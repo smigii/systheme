@@ -5,4 +5,6 @@ set(CMAKE_CXX_STANDARD 20)
 
 include_directories("include")
 
-add_executable(systheme src/systheme.cpp)
+add_executable(systheme src/systheme.cpp src/classes.cpp)
+
+add_executable(test_user src/tests.cpp src/classes.cpp)
