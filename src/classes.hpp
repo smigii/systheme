@@ -30,7 +30,7 @@ private:
 	bool opt_q = false;     // Quiet mode
 	bool opt_b = false;     // Backup
 	bool opt_c = false;     // Confirm
-	std::string file;   // Name of file theme
+	std::string theme;       // Name of file theme
 
 	void proc_first_arg(const User& user);
 
@@ -47,7 +47,7 @@ public:
 	[[nodiscard]] bool fl_b() const;
 	[[nodiscard]] bool fl_c() const;
 
-	[[nodiscard]] std::string get_file() const;
+	[[nodiscard]] std::string get_theme() const;
 
 	[[nodiscard]] std::string get_theme_path(const User& user) const;
 
@@ -95,7 +95,7 @@ private:
 	void apply_conf_layer(PCCtmp& tmp, const auto & config) const;
 	void apply_comp_layer(PCCtmp& tmp, const auto & component) const;
 
-	void backup_file(const std::string& file) const;
+	void backup_file(const std::string& file, const PCCtmp& tmp) const;
 	bool prompt_confirm(PCCtmp& tmp, const std::string& dest_path) const;
 
 	void refresh() const;

@@ -6,17 +6,12 @@
 
 #include <iostream>
 #include <unistd.h>
-#include <vector>
-#include <string>
-#include <fstream>
 #include <filesystem>
 #include <sys/stat.h>
 
-#include <nlohmann/json.hpp>
-
 #include "exceptions.hpp"
+#include "helpers.hpp"
 
-using json = nlohmann::json;
 namespace fs = std::filesystem;
 
 //========================================================================
@@ -34,12 +29,12 @@ Opts::Opts(int argc, char** argv, const User& user){
 }
 
 void Opts::proc_first_arg(const User& user){
-	file = argv[1];
+	theme = argv[1];
 	// If the first argument is --help or --usage, print the message
 	// and leave. exit() is a sucky thing to do, but it's fine for now
 	// since we haven't openned any files, and this IS a succesfult
 	// program termination.
-	if(file == "--usage" || file == "--help"){
+	if(theme == "--usage" || theme == "--help"){
 		HELP_ME();
 		exit(EXIT_SUCCESS);
 	}
@@ -92,7 +87,7 @@ void Opts::HELP_ME(){
 }
 
 std::string Opts::get_theme_path(const User &user) const {
-	return user.get_st_path() + "themes/" + file;
+	return user.get_st_path() + "themes/" + theme;
 }
 
 bool Opts::fl_s() const {return opt_s;}
@@ -101,7 +96,7 @@ bool Opts::fl_q() const{return opt_q;}
 bool Opts::fl_b() const{return opt_b;}
 bool Opts::fl_c() const{return opt_c;}
 
-std::string Opts::get_file() const {return file;}
+std::string Opts::get_theme() const {return theme;}
 
 //========================================================================
 //   USER CLASS
@@ -148,7 +143,6 @@ PCC::PCC(const User* user, const Opts* opts)
 	ifs >> this->js;
 }
 
-// This should be broken up mayhaps?
 void PCC::apply_theme(){
 
 	PCCtmp tmp;
@@ -160,7 +154,7 @@ void PCC::apply_theme(){
 	refresh();
 
 	if(!opts->fl_q())
-		std::cout << "Applied theme [" << opts->get_file() << "]\n";
+		std::cout << "Applied theme [" << opts->get_theme() << "]\n";
 
 	if(opts->fl_s()) {
 		std::cout << "SIMULATION MODE -> NO CHANGES APPLIED\n";
@@ -186,12 +180,12 @@ void PCC::apply_conf_layer(PCCtmp& tmp, const auto & config) const {
 	tmp.conf = config["name"];
 
 	if(opts->fl_v())
-		std::cout << "\tOverwriting [" << tmp.conf << "]...\n";
+		std::cout << "* Config [" << tmp.conf << "]...\n";
 
 	// Get the final destination of the file we are about to overwrite
 	std::string dest_path = user->handle_rel_path(std::string(config["dest"]));
 	if(opts->fl_b())
-		backup_file(dest_path);
+		backup_file(dest_path, tmp);
 
 	if(opts->fl_c()) {
 		bool choice = prompt_confirm(tmp, dest_path);
@@ -217,7 +211,7 @@ void PCC::apply_conf_layer(PCCtmp& tmp, const auto & config) const {
 void PCC::apply_comp_layer(PCCtmp& tmp, const auto & component) const {
 
 	if(opts->fl_v())
-		std::cout << "\t\tAdding component [" << component << "]...\n";
+		std::cout << "** Adding component [" << component << "]...\n";
 
 	std::string path = user->get_st_path() + "data/" + tmp.prog + "/" + tmp.conf + "/" + std::string(component);
 
@@ -239,14 +233,21 @@ void PCC::refresh() const {
 		system(refresh_cmd.c_str());
 }
 
-void PCC::backup_file(const std::string& file) const {
-	std::string bu_path = user->get_home() + ".systheme_backups/";
+void PCC::backup_file(const std::string& file, const PCCtmp& tmp) const {
+
+	std::string new_dir = get_time_stamp();
+	std::string bu_path = user->get_home() + ".systheme_backups/" + new_dir + "/";
+
+	fs::create_directory(bu_path);
+
+	bu_path += tmp.prog + "--";
+	bu_path += fs::path(file).filename();
 
 	if(opts->fl_v())
-		std::cout << "Backup " << file << " to " << bu_path << "\n";
+		std::cout << "* Backup " << file << " to " << bu_path << "\n";
 
 	std::ifstream src(file, std::ios::binary);
-	std::ofstream dst(bu_path + "hjk", std::ios::binary);
+	std::ofstream dst(bu_path, std::ios::binary);
 	dst << src.rdbuf();
 }
 
