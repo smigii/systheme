@@ -1,28 +1,18 @@
 #include <iostream>
 
-#include "exceptions.hpp"
-#include "classes.hpp"
+#include "utils/exceptions.h"
+#include "user.h"
+#include "opts.h"
+#include "engine.h"
 
 int main(int argc, char* argv[]) {
 
-	try {
+	// Initialize and validate the User and Opts objects...
+	User::init();
+//	try {const Opts opts = Opts(argc, argv);}
+//	catch(const InvalidThemeException& e) {std::cout << e.msg() << std::endl;}
 
-		// Initialize and validate the User and Opts objects...
-		const User user = User();
-		const Opts opts = Opts(argc, argv, user);
-
-		// If initialization is succesful, we can assume the file name
-		// given by the user is valid.
-		PCC driver = PCC(&user, &opts);
-		driver.apply_theme();
-
-	} catch(const NoConfigDirException& e) {
-		std::cout << e.msg() << "\n";
-		return EXIT_FAILURE;
-	} catch(const InvalidThemeException& e) {
-		std::cout << e.msg() << "\n";
-		return EXIT_FAILURE;
-	}
+	STengine::process_config_theme("alacritty/", "test.syth");
 
 	return 0;
 

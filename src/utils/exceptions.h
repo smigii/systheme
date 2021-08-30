@@ -2,8 +2,8 @@
 // Created by smigii on 2021-04-03.
 //
 
-#ifndef SYSTHEME_EXCEPTIONS_HPP
-#define SYSTHEME_EXCEPTIONS_HPP
+#ifndef SYSTHEME_EXCEPTIONS_H
+#define SYSTHEME_EXCEPTIONS_H
 
 #include <string>
 #include <stdexcept>
@@ -40,4 +40,4 @@ public:
 	}
 };
 
-#endif //SYSTHEME_EXCEPTIONS_HPP
+#endif //SYSTHEME_EXCEPTIONS_H
