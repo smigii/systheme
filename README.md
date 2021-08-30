@@ -4,8 +4,9 @@ IN PROGRESS
 A convenient way to manage and create custom themes for your unix environment.
 
 ## Overview
-Systheme works by reading in themes that you specify in JSON files and assembling and overwriting your programs configuration files according to this JSON recipe.\
-Your configuration files will be broken down into modular parts, so that you can mix and match different pieces of your config files for different themes.\
+Systheme works by adding in symbols to your config files, then referencing those symbols in JSON 
+theme files that you create. Essentially a glorified search/replace that helps you manage your
+pretty terminal colors (or whatever you can fit in your config files).
 
 ## Installation
 1. (something something install/build) systheme
@@ -14,20 +15,23 @@ Your configuration files will be broken down into modular parts, so that you can
 You will now have the `~/.config/systheme` directory, which contains `data` and `themes` subdirectories, as well as the `refresh.sh` script.
 
 ## The Data Directory
-This is the directory that will hold all your config file parts. It has the following structure...
+This is the directory that will hold the config files for all your programs.
+```
+* data/
+  * PROGRAM_1/
+    * template.extension
+    * themes/
+      * config_1.xyz
+      * config_2.abc
+      * config_n.jkl
+```
+The `template.*` file will hold the config file, and will contain the symbols that are 
+to be managed by systheme. For example, you may put in your vim template...
+```
+colorscheme: [%colorscheme%]
+```
+so that you can synchronize your vim colorschemes with the rest of your system.
 
-  * data
-    * PROGRAM 1         <- First layer
-      * CONFIG 1        <- Second layer
-        * COMPONENT 1   <- Third layer
-        * COMPONENT 2   <- Third layer
-        * COMPONENT n   <- Third layer
-
-The first two layers should only contain directories and only exist for organization.
-
-The third layer is where you will put the actual parts of your config files. 
-For example, if the config file we want to build is .bashrc, we might want to have the following components...
-* Base - For things like aliases, exports or anything that you want to remain constant for all themes.
-* Prompt - This would just contain your PS1 export.
-
-## The Themes Directory
+## The Systhemes Directory
+This is where full system themes are stored. Again, systhem themes are written in JSON
+format and define what themes to use for each of your configs.
