@@ -52,38 +52,17 @@ std::string LineParser::strip_braces()
 }
 
 
-// This is shit, we should have different syntax for the macros.
 std::string LineParser::process_key(const std::string& key)
 {
 	std::string result;
 	const auto iter {symbol_map->find(key)};
 
-	// If we ever add any Systheme macros, we could process them here. Maybe...
-	// [%SYM: {{ }}%] which would change the symbol from [% to {{
-	if(iter == symbol_map->end()){
-		std::string delim {DELIM};
-		size_t delim_idx {key.find(delim)};
-		std::string cmd {key.substr(0, delim_idx)};
-		std::string rem {key.substr(delim_idx+delim.length())};
-
-		if(cmd == "__PATH")
-			process_dst(rem);
-
+	// Opt will define how to handle missing symbols
+	// will implement later.
+	if(iter == symbol_map->end())
 		result = "";
-	}
 	else
 		result = iter->second;
 
 	return result;
-}
-
-fs::path LineParser::get_dst() const
-{
-	return dst;
-}
-
-void LineParser::process_dst(const std::string &path)
-{
-	fs::path full_path {User::expand_tilde_path(path)};
-	dst = full_path;
 }

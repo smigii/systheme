@@ -7,17 +7,14 @@
 
 #include <string>
 #include <unordered_map>
-#include <filesystem>
 
 #include "utils/GLOBALS.h"
 
-namespace fs = std::filesystem;
 typedef std::unordered_map<std::string, std::string> umapstr;
 
 class LineParser {
 
 private:
-	fs::path dst;
 	const umapstr* symbol_map;
 	const std::string open {OPEN};
 	const std::string close {CLOSE};
@@ -36,15 +33,11 @@ private:
 	// value from the symbol table.
 	void process_next_symbol();
 
-	void process_dst(const std::string& path);
-
 public:
 
 	explicit LineParser(const umapstr* symbol_map);
 
 	std::string process(std::string& line);
-
-	[[nodiscard]] fs::path get_dst() const;
 
 };
 

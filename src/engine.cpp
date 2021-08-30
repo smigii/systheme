@@ -9,13 +9,10 @@
 #include <unordered_map>
 #include <fstream>
 
+#include "utils/GLOBALS.h"
 #include "utils/helpers.h"
 #include "user.h"
 #include "lineparser.h"
-
-#define DELIM ": "
-#define OPEN "[%"
-#define CLOSE "%]"
 
 namespace fs = std::filesystem;
 typedef std::unordered_map<std::string, std::string> umapstr;
@@ -35,6 +32,8 @@ using json = nlohmann::json;
 
 // Parse a validated template file line-by-line and process each line.
 void process_template(const fs::path& tplate_file, const umapstr& symbol_map);
+
+fs::path process_path(std::ifstream& ifs);
 
 // --------------------------------------------------------------
 // --- FHANDLE --------------------------------------------------
@@ -94,7 +93,7 @@ umapstr extract_symbols(const fs::path& theme_path)
 
 	ifs >> js;
 
-	for(const auto& kvp : js.items()){
+	for(const auto& kvp : js["symbols"].items()){
 		std::string key {kvp.key()};
 		std::string val {kvp.value()};
 		table.insert(std::make_pair(key, val));
@@ -106,7 +105,7 @@ umapstr extract_symbols(const fs::path& theme_path)
 void process_template(const fs::path& tplate_file, const umapstr& symbol_map)
 {
 	std::ifstream ifs(tplate_file);
-	fs::path output {tplate_file.parent_path().string() + "/OUTPUT"};
+	fs::path output {process_path(ifs)};
 	std::ofstream ofs(output);
 
 	LineParser parser(&symbol_map);
@@ -118,6 +117,18 @@ void process_template(const fs::path& tplate_file, const umapstr& symbol_map)
 		std::cout << out << std::endl;
 	}
 
-	fs::path dst {parser.get_dst()};
-	fs::rename(output, dst);
+	std::cout << output.string() << std::endl;
+//	if(!dst.empty())
+//		fs::rename(output, dst);
+}
+
+// Retreieves first line in a template file, which is the destination path.
+fs::path process_path(std::ifstream& ifs)
+{
+	std::string open {OPEN};
+	std::string close {CLOSE};
+	std::string first_line;
+	std::getline(ifs, first_line);
+	fs::path o {User::expand_tilde_path(first_line.substr(open.length(), first_line.length() - open.length() - close.length()))};
+	return o;
 }
