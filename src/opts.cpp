@@ -51,20 +51,20 @@ void Opts::proc_rem_args(){
 			case 's':
 				opt_s = true;
 				break;
-				case 'v':
-					opt_v = true;
-					break;
-					case 'q':
-						opt_q = true;
-						break;
-						case 'b':
-							opt_b = true;
-							break;
-							case 'c':
-								opt_c = true;
-								break;
-								default:
-									break;
+			case 'v':
+				opt_v = true;
+				break;
+			case 'q':
+				opt_q = true;
+				break;
+			case 'b':
+				opt_b = true;
+				break;
+			case 'c':
+				opt_c = true;
+				break;
+			default:
+				break;
 		}
 	}
 	// Simulation mode activates Verbose mode.
@@ -89,9 +89,9 @@ std::string Opts::get_theme_path() const {
 }
 
 bool Opts::fl_s() const {return opt_s;}
-bool Opts::fl_v() const{return opt_v;}
-bool Opts::fl_q() const{return opt_q;}
-bool Opts::fl_b() const{return opt_b;}
-bool Opts::fl_c() const{return opt_c;}
+bool Opts::fl_v() const {return opt_v;}
+bool Opts::fl_q() const {return opt_q;}
+bool Opts::fl_b() const {return opt_b;}
+bool Opts::fl_c() const {return opt_c;}
 
 std::string Opts::get_theme() const {return theme;}

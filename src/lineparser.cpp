@@ -51,6 +51,8 @@ std::string LineParser::strip_braces()
 	return operand.substr(start_idx + open.length(), end_idx - start_idx - close.length());
 }
 
+
+// This is shit, we should have different syntax for the macros.
 std::string LineParser::process_key(const std::string& key)
 {
 	std::string result;

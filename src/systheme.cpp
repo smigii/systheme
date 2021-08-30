@@ -12,7 +12,7 @@ int main(int argc, char* argv[]) {
 //	try {const Opts opts = Opts(argc, argv);}
 //	catch(const InvalidThemeException& e) {std::cout << e.msg() << std::endl;}
 
-	STengine::process_config_theme("alacritty/", "test.syth");
+	STengine::process_config_theme("alacritty/", "test.json");
 
 	return 0;
 

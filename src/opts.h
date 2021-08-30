@@ -12,6 +12,7 @@ class User;
 // Opts Class
 // Stores the CLA flags that are set by user, and the theme file to use.
 class Opts {
+
 private:
 	int argc;
 	char** argv;

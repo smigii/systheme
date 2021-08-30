@@ -20,6 +20,9 @@
 namespace fs = std::filesystem;
 typedef std::unordered_map<std::string, std::string> umapstr;
 
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
+
 // --------------------------------------------------------------
 // --- PROTOTYPES -----------------------------------------------
 
@@ -84,16 +87,16 @@ fs::path get_template_file(const fs::path& directory)
 
 umapstr extract_symbols(const fs::path& theme_path)
 {
+	json js;
 	umapstr table;
 	std::ifstream ifs(theme_path);
 	std::string delim {DELIM};
 
-	std::string line;
-	while(std::getline(ifs, line)){
-		trim(line);
-		if(line.empty()) continue;
-		std::string key {line.substr(0, line.find(delim))};
-		std::string val {line.erase(0, key.length() + delim.length())};
+	ifs >> js;
+
+	for(const auto& kvp : js.items()){
+		std::string key {kvp.key()};
+		std::string val {kvp.value()};
 		table.insert(std::make_pair(key, val));
 	}
 
@@ -117,5 +120,4 @@ void process_template(const fs::path& tplate_file, const umapstr& symbol_map)
 
 	fs::path dst {parser.get_dst()};
 	fs::rename(output, dst);
-//	std::cout << dst.string() << std::endl;
 }
