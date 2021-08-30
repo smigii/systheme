@@ -11,14 +11,24 @@
 #include "user.h"
 #include "utils/exceptions.h"
 
-Opts::Opts(int argc, char** argv){
+int Opts::argc {-1};
+char** Opts::argv {nullptr};
+bool Opts::opt_s {false};
+bool Opts::opt_v {false};
+bool Opts::opt_q {false};
+bool Opts::opt_b {false};
+bool Opts::opt_c {false};
+std::string Opts::theme;
 
-	this->argc = argc;
-	this->argv = argv;
+Opts::Opts(){}
+
+void Opts::init(int _argc, char **_argv)
+{
+	argc = _argc;
+	argv = _argv;
 
 	proc_first_arg();
 	proc_rem_args();
-
 }
 
 void Opts::proc_first_arg(){
@@ -27,11 +37,11 @@ void Opts::proc_first_arg(){
 		exit(EXIT_SUCCESS);
 	}
 
-	theme = argv[1];
 	// If the first argument is --help or --usage, print the message
 	// and leave. exit() is a sucky thing to do, but it's fine for now
 	// since we haven't openned any files, and this IS a succesful
 	// program termination.
+	theme = argv[1];
 	if(theme == "--usage" || theme == "--help"){
 		HELP_ME();
 		exit(EXIT_SUCCESS);
@@ -39,9 +49,8 @@ void Opts::proc_first_arg(){
 
 	optind++;
 	std::string path = get_theme_path();
-	struct stat buffer{};
-	if(stat (path.c_str(), &buffer) != 0)
-		throw InvalidThemeException(path);
+	if(!fs::exists(path))
+		throw OptsException("Invalid theme path: " + path);
 }
 
 void Opts::proc_rem_args(){
@@ -64,7 +73,7 @@ void Opts::proc_rem_args(){
 				opt_c = true;
 				break;
 			default:
-				break;
+				throw OptsException("Invalid argument: -" + std::to_string(choice));
 		}
 	}
 	// Simulation mode activates Verbose mode.
@@ -84,14 +93,14 @@ void Opts::HELP_ME(){
 	std::cout << "\n";
 }
 
-std::string Opts::get_theme_path() const {
-	return User::get_st_path() + "themes/" + theme;
+fs::path Opts::get_theme_path() {
+	return fs::path{User::get_st_path() / "systhemes/" / theme};
 }
 
-bool Opts::fl_s() const {return opt_s;}
-bool Opts::fl_v() const {return opt_v;}
-bool Opts::fl_q() const {return opt_q;}
-bool Opts::fl_b() const {return opt_b;}
-bool Opts::fl_c() const {return opt_c;}
+bool Opts::fl_s() {return opt_s;}
+bool Opts::fl_v() {return opt_v;}
+bool Opts::fl_q() {return opt_q;}
+bool Opts::fl_b() {return opt_b;}
+bool Opts::fl_c() {return opt_c;}
 
-std::string Opts::get_theme() const {return theme;}
+std::string Opts::get_theme() {return theme;}

@@ -13,7 +13,7 @@ namespace fs = std::filesystem;
 
 // Initialize static vars
 std::string User::name;
-std::string User::home_path;
+fs::path User::home_path;
 
 // Must be called once before being used. Stores
 // the needed paths, so we don't need to keep making system
@@ -25,37 +25,40 @@ void User::init()
 		return;
 
 	name = getlogin();
-	home_path = "/home/" + name + "/";
+	home_path = fs::path{"/home/" + name + "/"};
 
+	// Check for a ~/.config directory
 	if( !fs::is_directory(get_st_path()) ){
 		throw NoConfigDirException(get_st_path() );
 	}
 }
 
-std::string User::get_st_path()
+fs::path User::get_st_path()
 {
-	return (home_path + ".config/systheme2/");
+	return fs::path{home_path / ".config/systheme2/"};
 }
 
-std::string User::expand_tilde_path(std::string path)
+fs::path User::expand_tilde_path(const fs::path& path)
 {
-	if(path.at(0) == '~'){
-		std::string new_path = home_path;
-		std::string p2 = path.substr(2);
-		new_path += p2;
-		return new_path;
+	if(path.string().at(0) == '~'){
+		std::string p2 = path.string().substr(2);
+		return fs::path{home_path / p2};
 	} else {
 		return path;
 	}
 }
 
-std::string User::get_home()
+fs::path User::get_home()
 {
-	return home_path;
+	return fs::path{home_path};
 }
 
-std::string User::get_data_path() {
-	return get_st_path() + "data/";
+fs::path User::get_data_path() {
+	return fs::path{get_st_path() / "data/"};
 }
 
 
+/*
+ * Why are we returning all these by value? Unless I'm mistaken, rvalues and RVO.
+ * https://www.scribd.com/document/316704010/Want-Speed-Pass-by-Value
+ */

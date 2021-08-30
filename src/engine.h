@@ -10,7 +10,7 @@
 // Main Systheme interface.
 namespace STengine{
 
-	void process_config_theme(const std::string& program, const std::string& theme);
+	void process_config_theme(const std::string& config, const std::string& theme);
 
 	void process_systheme(const std::string& theme);
 

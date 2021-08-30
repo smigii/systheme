@@ -6,6 +6,10 @@
 #define SYSTHEME_OPTS_H
 
 #include <string>
+#include <stdexcept>
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 class User;
 
@@ -14,35 +18,43 @@ class User;
 class Opts {
 
 private:
-	int argc;
-	char** argv;
 
-	bool opt_s = false;     // Simulation mode
-	bool opt_v = false;     // Verbose mode (takes precedence over Quiet option)
-	bool opt_q = false;     // Quiet mode
-	bool opt_b = false;     // Backup
-	bool opt_c = false;     // Confirm
-	std::string theme;       // Name of file theme
+	Opts();  // "static" class
 
-	void proc_first_arg();
+	static int argc;
+	static char** argv;
 
-	void proc_rem_args();
+	static bool opt_s;				// Simulation mode
+	static bool opt_v;				// Verbose mode (takes precedence over Quiet option)
+	static bool opt_q;				// Quiet mode
+	static bool opt_b;				// Backup
+	static bool opt_c;				// Confirm
+	static std::string theme;		// Name of file theme
 
-	void HELP_ME();
+	static void proc_first_arg();
+	static void proc_rem_args();
+	static void HELP_ME();
 
 public:
-	Opts(int argc, char** argv);
 
-	[[nodiscard]] bool fl_s() const;
-	[[nodiscard]] bool fl_v() const;
-	[[nodiscard]] bool fl_q() const;
-	[[nodiscard]] bool fl_b() const;
-	[[nodiscard]] bool fl_c() const;
+	static void init(int argc, char** argv);
 
-	[[nodiscard]] std::string get_theme() const;
+	[[nodiscard]] static bool fl_s();
+	[[nodiscard]] static bool fl_v();
+	[[nodiscard]] static bool fl_q();
+	[[nodiscard]] static bool fl_b();
+	[[nodiscard]] static bool fl_c();
 
-	[[nodiscard]] std::string get_theme_path() const;
+	[[nodiscard]] static std::string get_theme();
+	[[nodiscard]] static fs::path get_theme_path();
 
+};
+
+class OptsException : public std::runtime_error
+{
+public:
+	OptsException(const std::string& msg)
+	: std::runtime_error(msg) {}
 };
 
 #endif //SYSTHEME_OPTS_H

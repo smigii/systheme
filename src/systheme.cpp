@@ -9,10 +9,12 @@ int main(int argc, char* argv[]) {
 
 	// Initialize and validate the User and Opts objects...
 	User::init();
-//	try {const Opts opts = Opts(argc, argv);}
+
+	Opts::init(argc, argv);
 //	catch(const InvalidThemeException& e) {std::cout << e.msg() << std::endl;}
 
-	STengine::process_config_theme("alacritty/", "test.json");
+//	STengine::process_config_theme("alacritty/", "test.json");
+	STengine::process_systheme(Opts::get_theme());
 
 	return 0;
 

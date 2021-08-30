@@ -12,6 +12,7 @@
 #include "utils/GLOBALS.h"
 #include "utils/helpers.h"
 #include "user.h"
+#include "opts.h"
 #include "lineparser.h"
 
 namespace fs = std::filesystem;
@@ -28,7 +29,7 @@ using json = nlohmann::json;
 
 // Read from a validated .syth file to get the symbols needed.
 // for replacement.
-[[nodiscard]] umapstr extract_symbols(const fs::path& theme_path);
+[[nodiscard]] umapstr extract_symbols(const fs::path& theme_path, bool parse_includes=true);
 
 // Parse a validated template file line-by-line and process each line.
 void process_template(const fs::path& tplate_file, const umapstr& symbol_map);
@@ -36,17 +37,27 @@ void process_template(const fs::path& tplate_file, const umapstr& symbol_map);
 fs::path process_path(std::ifstream& ifs);
 
 // --------------------------------------------------------------
+// --- EXCEPTIONS -----------------------------------------------
+
+class EngineException : public std::exception {
+private:
+	std::string message;
+
+public:
+	explicit EngineException(std::string message)
+	: message{std::move(message)} {}
+
+	[[nodiscard]] std::string msg () const noexcept { return message; }
+};
+
+// --------------------------------------------------------------
 // --- FHANDLE --------------------------------------------------
 
-void STengine::process_config_theme(const std::string& program, const std::string& theme)
+void STengine::process_config_theme(const std::string& config, const std::string& theme)
 {
 	// Validate template.* file
-	fs::path program_dir {User::get_data_path() + program};
+	fs::path program_dir {User::get_data_path() / config};
 	fs::path tplate_file {get_template_file(program_dir)};
-	if(tplate_file.empty()){
-		std::cout << "NO TEMPLATE FILE AT " + program_dir.string() << std::endl;
-		return;
-	}
 
 	// Validate theme.syth file
 	fs::path theme_path {program_dir.string() + "themes/" + theme};
@@ -62,15 +73,29 @@ void STengine::process_config_theme(const std::string& program, const std::strin
 
 }
 
-void STengine::process_systheme(const std::string& theme)
+void STengine::process_systheme(const std::string& systheme)
 {
+	json derulo;
+	std::ifstream ifs(Opts::get_theme_path());
 
+	ifs >> derulo;
+
+	for(const auto& kvp : derulo.items()){
+		const std::string& config {kvp.key()};
+		const std::string& conf_theme {kvp.value()};
+		process_config_theme(config, conf_theme);
+	}
 }
 
 
 // --------------------------------------------------------------
 // --- IMPLEMENTATIONS ------------------------------------------
 
+/// Searches for and retrieves any file named template
+/// in the given directory, regardless of extension.
+/// \param directory path of directory to search
+/// \return path of template.* file
+/// \throws EngineException error if no template file found.
 fs::path get_template_file(const fs::path& directory)
 {
 	fs::directory_iterator dir_iter {directory};
@@ -81,19 +106,29 @@ fs::path get_template_file(const fs::path& directory)
 				return i.path();
 		}
 	}
-	return fs::path {""};
+
+	throw EngineException("No template file in directory " + directory.string());
 }
 
-umapstr extract_symbols(const fs::path& theme_path)
+umapstr extract_symbols(const fs::path& theme_path, bool parse_includes)
 {
-	json js;
+	json derulo;
 	umapstr table;
 	std::ifstream ifs(theme_path);
 	std::string delim {DELIM};
 
-	ifs >> js;
+	ifs >> derulo;
 
-	for(const auto& kvp : js["symbols"].items()){
+	// Handle includes
+	if(parse_includes){
+		std::cout << "INCLUDES:[";
+		for(const auto& include : derulo["includes"]){
+			std::cout << "\t" << include << "\n";
+		}
+		std::cout << "]\n";
+	}
+
+	for(const auto& kvp : derulo["symbols"].items()){
 		std::string key {kvp.key()};
 		std::string val {kvp.value()};
 		table.insert(std::make_pair(key, val));
@@ -107,19 +142,18 @@ void process_template(const fs::path& tplate_file, const umapstr& symbol_map)
 	std::ifstream ifs(tplate_file);
 	fs::path output {process_path(ifs)};
 	std::ofstream ofs(output);
-
 	LineParser parser(&symbol_map);
-
 	std::string raw_line;
+
+	// If simulation mode
+	if(Opts::fl_s())
+		return;
+
 	while(std::getline(ifs, raw_line)){
 		std::string out {parser.process(raw_line)};
 		ofs << out << std::endl;
 		std::cout << out << std::endl;
 	}
-
-	std::cout << output.string() << std::endl;
-//	if(!dst.empty())
-//		fs::rename(output, dst);
 }
 
 // Retreieves first line in a template file, which is the destination path.

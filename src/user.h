@@ -6,9 +6,9 @@
 #define SYSTHEME_USER_H
 
 #include <string>
-//#include <filesystem>
+#include <filesystem>
 
-//namespace fs = std::filesystem;
+namespace fs = std::filesystem;
 
 // Stores name and systheme home_path path of current user, facilitates
 // any operations that rely on user specific file paths. 'Static' class
@@ -17,22 +17,22 @@ class User {
 private:
 	User();	// 'Static class', should not be able to instantiate.
 	static std::string name;
-	static std::string home_path;
+	static fs::path home_path;
 
 public:
 	static void init();
 
 	// Get ~/
-	[[nodiscard]] static std::string get_home();
+	[[nodiscard]] static fs::path get_home();
 
 	// Get ~/.config/systheme/
-	[[nodiscard]] static std::string get_st_path();
+	[[nodiscard]] static fs::path get_st_path();
 
 	// Get ~/.config/systheme/data/
-	[[nodiscard]] static std::string get_data_path();
+	[[nodiscard]] static fs::path get_data_path();
 
 	// Expand ~/* to /home/user/*
-	[[nodiscard]] static std::string expand_tilde_path(std::string path);
+	[[nodiscard]] static fs::path expand_tilde_path(const fs::path& path);
 
 };
 
