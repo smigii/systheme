@@ -36,7 +36,7 @@ using json = nlohmann::json;
 /// \param theme_path Path to a configs theme.json file.
 /// \param parse_includes Default false, determines if the files "includes"
 /// section is to be parsed.
-void extract_symbols(umapstr& _out_map, const fs::path& theme_path, bool parse_includes=true);
+umapstr extract_symbols(const fs::path& theme_path);
 
 // Parse a validated template file line-by-line and process each line.
 void process_template(const fs::path& tplate_file, const umapstr& symbol_map);
@@ -73,8 +73,7 @@ void STengine::process_config_theme(const std::string& config, const std::string
 	}
 
 	// Get the symbol map
-	umapstr symbol_map;
-	extract_symbols(symbol_map, theme_path);
+	umapstr symbol_map = extract_symbols(theme_path);
 
 	process_template(tplate_file, symbol_map);
 }
@@ -122,29 +121,40 @@ fs::path get_template_file(const fs::path& directory)
 	throw EngineException("No template file in directory " + directory.string());
 }
 
-
-void extract_symbols(umapstr& _out_map, const fs::path& theme_path, bool parse_includes)
+// This is fucking disgusting and needs to be optimized
+// return a unique pointer
+umapstr extract_symbols(const fs::path& theme_path)
 {
 	json derulo;
 	std::ifstream ifs(theme_path);
 	std::string delim {DELIM};
+	umapstr result;
 
 	ifs >> derulo;
 
 	// Handle includes
-	if(parse_includes){
-//		std::cout << "INCLUDES:[";
-//		for(const auto& include : derulo["includes"]){
-//			std::cout << "\t" << include << "\n";
-//		}
-//		std::cout << "]\n";
+	std::unordered_map<std::string, umapstr> scopes;
+	for(const auto& include : derulo["includes"].items()){
+		std::string inc_config {include.key()};
+		std::string inc_theme {include.value()};
+		fs::path path {User::get_data_path() / inc_config / "themes" / inc_theme};
+		scopes.insert(std::make_pair(inc_config, extract_symbols(path)));
 	}
 
 	for(const auto& kvp : derulo["symbols"].items()){
 		std::string key {kvp.key()};
-		std::string val {kvp.value()};
-		_out_map.insert(std::make_pair(key, val));
+		std::string val;
+		if(kvp.value().type() == json::value_t::string)
+			val = kvp.value();
+		else if(kvp.value().type() == json::value_t::object){
+			std::string scope = kvp.value().items().begin().key();
+			std::string key = kvp.value().items().begin().value();
+			val = scopes.find(scope)->second.find(key)->second;
+		}
+		result.insert(std::make_pair(key, val));
 	}
+
+	return result;
 }
 
 void process_template(const fs::path& tplate_file, const umapstr& symbol_map)
