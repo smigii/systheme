@@ -9,6 +9,9 @@
 #include <stdexcept>
 #include <filesystem>
 
+#define IF_VERBOSE(out) if(Opts::fl_v()) std::cout << out;
+#define IF_VERBOSE_ENDL(out) if(Opts::fl_v()) std::cout << out << std::endl;
+
 namespace fs = std::filesystem;
 
 class User;
@@ -39,11 +42,11 @@ public:
 
 	static void init(int argc, char** argv);
 
-	[[nodiscard]] static bool fl_s();
-	[[nodiscard]] static bool fl_v();
-	[[nodiscard]] static bool fl_q();
-	[[nodiscard]] static bool fl_b();
-	[[nodiscard]] static bool fl_c();
+	[[nodiscard]] static bool fl_s(); // Simulation mode
+	[[nodiscard]] static bool fl_v(); // Verbose mode
+	[[nodiscard]] static bool fl_q(); // Quiet mode
+	[[nodiscard]] static bool fl_b(); // Backup mode
+	[[nodiscard]] static bool fl_c(); // Confirm mode
 
 	[[nodiscard]] static std::string get_theme();
 	[[nodiscard]] static fs::path get_theme_path();

@@ -1,19 +1,13 @@
 #include <iostream>
 
-#include "utils/exceptions.h"
 #include "user.h"
 #include "opts.h"
 #include "engine.h"
 
 int main(int argc, char* argv[]) {
 
-	// Initialize and validate the User and Opts objects...
 	User::init();
-
 	Opts::init(argc, argv);
-//	catch(const InvalidThemeException& e) {std::cout << e.msg() << std::endl;}
-
-//	STengine::process_config_theme("alacritty/", "test.json");
 	STengine::process_systheme(Opts::get_theme());
 
 	return 0;
@@ -41,6 +35,12 @@ int main(int argc, char* argv[]) {
  *     This would include the LOCAL symbols from data/alacritty/template.*
  *     to be accessed by "alc".
  *     The "sym2" symbol is accessing alc::normal-red.
+ *
+ *  THEME FILE MACROS - These macros are to be used in json theme files.
+ *      [%!FILE: /path/to/file%] -> Will return the contents of a file when queried
+ *      "prompt": "[%!FILE: extra/minimal%] would replace any [%prompt%] symbols with
+ *      the contents of the file ~/.config/systheme/data/CURRENT_CONFIG/extra/minimal.
+ *      Relative paths would be relative to ~/.config/systheme/data/CURRENT_CONFIG
  *
  *
  */
