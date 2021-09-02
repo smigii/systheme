@@ -8,10 +8,10 @@
 
 #include "utils/helpers.h"
 
-LineParser::LineParser(const umapstr *symbol_map)
+systheme::LineParser::LineParser(const umapstr *symbol_map)
 : symbol_map{symbol_map} {}
 
-std::string LineParser::process(std::string& line)
+std::string systheme::LineParser::process(std::string& line)
 {
 	done = false;
 	operand = line;
@@ -26,10 +26,10 @@ std::string LineParser::process(std::string& line)
 	return operand;
 }
 
-void LineParser::process_next_symbol()
+void systheme::LineParser::process_next_symbol()
 {
 	std::string key {strip_braces()};
-	trim(key);
+	systheme::helpers::trim(key);
 	std::string val {process_key(key)};
 
 	if(!val.empty()){
@@ -46,13 +46,13 @@ void LineParser::process_next_symbol()
 	if(start_idx == npos || end_idx == npos) done = true;
 }
 
-std::string LineParser::strip_braces()
+std::string systheme::LineParser::strip_braces()
 {
 	return operand.substr(start_idx + open.length(), end_idx - start_idx - close.length());
 }
 
 
-std::string LineParser::process_key(const std::string& key)
+std::string systheme::LineParser::process_key(const std::string& key)
 {
 	std::string result;
 	const auto iter {symbol_map->find(key)};

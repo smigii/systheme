@@ -8,7 +8,7 @@
 #include <string>
 
 // Main Systheme interface.
-namespace systheme{
+namespace systheme {
 
 	void apply_program_theme(const std::string& program, const std::string& theme);
 

@@ -52,7 +52,7 @@ std::string process_scope(const key_value_scope& kvs);
 // --------------------------------------------------------------
 // --- HEADER IMPLEMENTATIONS -----------------------------------
 
-t_symbolmap systheme::make_symbol_map(const fs::path& theme_path)
+t_symbolmap systheme::symbols::make_symbol_map(const fs::path& theme_path)
 {
 	try {
 		OPTS_VBOSE_1("creating symbol map for: [" + theme_path.string() + "]")
@@ -78,9 +78,10 @@ t_symbolmap systheme::make_symbol_map(const fs::path& theme_path)
 
 std::unique_ptr<json> load_json_theme(const fs::path& theme_path)
 {
-	// TODO: Should add some exception handling
-	std::unique_ptr<json> statham {std::make_unique<json>()};
+	if(!fs::exists(theme_path))
+		throw SysthemeException("Theme does not exist: [" + theme_path.string() + "]");
 	std::ifstream ifs(theme_path);
+	std::unique_ptr<json> statham {std::make_unique<json>()};
 	ifs >> *statham;
 	return std::move(statham);
 }
@@ -93,7 +94,7 @@ t_scope_map make_scope_map(std::unique_ptr<json>& json)
 		std::string inc_config {include.key()};
 		std::string inc_theme {include.value()};
 		fs::path path {User::get_data_path() / inc_config / "themes" / inc_theme};
-		scope_map.insert(std::make_pair(inc_config, systheme::make_symbol_map(path)));
+		scope_map.insert(std::make_pair(inc_config, systheme::symbols::make_symbol_map(path)));
 	}
 
 	// Return address same as local address, NVRO confirmed
@@ -164,12 +165,12 @@ std::string process_scope(const key_value_scope& kvs)
 	const auto symbol_map_iterator = kvs.scope_map.find(scope);
 
 	if(symbol_map_iterator == kvs.scope_map.end())
-		throw SysthemeException("No scope [" + scope + "]");
+		throw SysthemeException("No included scope: [" + scope + "]");
 
 	const auto result_iterator = symbol_map_iterator->second.find(scope_key);
 
 	if(result_iterator == symbol_map_iterator->second.end())
-		throw SysthemeException("Undefined symbol: [" + scope_key + "] in specified program theme: [" + scope + "]");
+		throw SysthemeException("Undefined symbol [" + scope_key + "] in [" + scope + "] scope");
 
 	return result_iterator->second;
 }

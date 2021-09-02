@@ -13,7 +13,7 @@ typedef std::unordered_map<std::string, std::string> t_symbolmap;
 
 namespace fs = std::filesystem;
 
-namespace systheme {
+namespace systheme::symbols{
 
 	t_symbolmap make_symbol_map(const fs::path& theme_path);
 

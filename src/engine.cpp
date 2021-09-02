@@ -10,6 +10,7 @@
 #include <fstream>
 #include <nlohmann/json.hpp>
 
+#include "utils/helpers.h"
 #include "utils/GLOBALS.h"
 #include "utils/exceptions.h"
 #include "user.h"
@@ -24,31 +25,17 @@ using json = nlohmann::json;
 // --------------------------------------------------------------
 // --- PROTOTYPES -----------------------------------------------
 
-/// Searches for and retrieves any file named template
-/// in the given directory, regardless of extension.
-/// \param directory path of directory to search
-/// \return path of template.* file
-/// \throws EngineException error if no template file found.
 [[nodiscard]] fs::path get_template_file(const fs::path& directory);
 
-// Parse a validated template file line-by-line and process each line.
-void process_template(const fs::path& tplate_file, const t_symbolmap& symbol_map);
+void process_template(const fs::path& tplate_path, const t_symbolmap& symbol_map);
 
 fs::path process_first_line(std::ifstream& ifs);
 
-// --------------------------------------------------------------
-// --- EXCEPTIONS -----------------------------------------------
+bool prompt_confirm(const fs::path& tplate_path, const fs::path& output_file);
 
-class EngineException : public std::exception {
-private:
-	std::string message;
+bool prompt_abort();
 
-public:
-	explicit EngineException(std::string message)
-	: message{std::move(message)} {}
-
-	[[nodiscard]] std::string msg () const noexcept { return message; }
-};
+void backup(const fs::path& file_path);
 
 // --------------------------------------------------------------
 // --- FHANDLE --------------------------------------------------
@@ -58,22 +45,13 @@ void systheme::apply_program_theme(const std::string& program, const std::string
 	// Validate template.* file
 	fs::path program_dir {User::get_data_path() / program};
 	fs::path tplate_file {get_template_file(program_dir)};
-
-	// Validate theme.json file
-	fs::path theme_path {program_dir.string() + "themes/" + theme};
-	if(!fs::exists(theme_path)){
-		throw EngineException("Theme [" + theme + "] does not exist at [" + theme_path.string() + "]");
-	}
+	fs::path theme_path {program_dir / "themes" / theme};
 
 	// Get the symbol map
-	try {
-		t_symbolmap symbol_map {systheme::make_symbol_map(theme_path)};
-		process_template(tplate_file, symbol_map);
-	}
-	catch(const SysthemeException& e){
-		std::cout << e.msg();
-	}
+	t_symbolmap symbol_map {systheme::symbols::make_symbol_map(theme_path)};
+	process_template(tplate_file, symbol_map);
 }
+
 
 void systheme::apply_system_theme(const std::string& theme)
 {
@@ -83,14 +61,15 @@ void systheme::apply_system_theme(const std::string& theme)
 	ifs >> derulo;
 
 	for(const auto& kvp : derulo.items()){
-		const std::string& config {kvp.key()};
+		const std::string& program {kvp.key()};
 		const std::string& conf_theme {kvp.value()};
-		OPTS_VBOSE_1("\nprocessing config [" + config + "], theme [" + conf_theme + "]")
-		try{ apply_program_theme(config, conf_theme); }
-		catch(const EngineException& e) {
-			OPTS_VBOSE_1("ERROR: " + e.msg())
-			std::string id {"*ERROR: config [" + config + "], theme [" + conf_theme + "]\n"};
-			errors.push_back(id + e.msg());
+		OPTS_VBOSE_1("\nprocessing config [" + program + "], theme [" + conf_theme + "]")
+		try{ apply_program_theme(program, conf_theme); }
+		catch(const SysthemeException& e) {
+			std::string id {"*ERROR: program [" + program + "], theme [" + conf_theme + "]\n"};
+			OPTS_VBOSE_1("\n" + id + e.msg())
+			errors.push_back(id);
+			if (prompt_abort()) {exit(-1);}
 		}
 	}
 
@@ -101,10 +80,8 @@ void systheme::apply_system_theme(const std::string& theme)
 	}
 }
 
-
 // --------------------------------------------------------------
 // --- IMPLEMENTATIONS ------------------------------------------
-
 
 fs::path get_template_file(const fs::path& directory)
 {
@@ -115,34 +92,39 @@ fs::path get_template_file(const fs::path& directory)
 				return i.path();
 		}
 	}
-	throw EngineException("No template file in directory " + directory.string());
+	throw SysthemeException("No template file in directory " + directory.string());
 }
 
-void process_template(const fs::path& tplate_file, const t_symbolmap& symbol_map)
+void process_template(const fs::path& tplate_path, const t_symbolmap& symbol_map)
 {
-	OPTS_VBOSE_1("processing template: [" + tplate_file.string() + "]")
+	OPTS_VBOSE_1("processing template: [" + tplate_path.string() + "]")
 
-	std::ifstream ifs(tplate_file);
-	fs::path output {process_first_line(ifs)};
-	if(!fs::exists(output))
-		throw EngineException("Invalid target path " + output.string());
-	std::ofstream ofs(output);
-	LineParser parser(&symbol_map);
+	std::ifstream ifs(tplate_path);
+	fs::path output_path {process_first_line(ifs)};
+	if(!fs::exists(output_path))
+		throw SysthemeException("Invalid target path " + output_path.string());
+	systheme::LineParser parser(&symbol_map);
 	std::string raw_line;
 
 	// If simulation mode
-	if(Opts::fl_s())
+	if(Opts::fl_s()){
+		std::cout << "SIMULATION MODE -- No changes written\n";
 		return;
+	}
 
-	OPTS_VBOSE_1("writing to: [" + output.string() + "]")
+	if(Opts::fl_c() && !prompt_confirm(tplate_path, output_path)) return;
+	if(Opts::fl_b()) backup(output_path);
 
+	OPTS_VBOSE_1("writing to: [" + output_path.string() + "]")
+
+	std::ofstream ofs(output_path);
 	while(std::getline(ifs, raw_line)){
 		std::string out {parser.process(raw_line)};
 		ofs << out << std::endl;
 	}
 }
 
-// Retreieves first line in a template file, which is the destination path.
+
 fs::path process_first_line(std::ifstream& ifs)
 {
 	std::string open {OPEN};
@@ -152,4 +134,50 @@ fs::path process_first_line(std::ifstream& ifs)
 	// [%~/path/to/dst%] -> /home/user/path/to/dst
 	fs::path o {User::expand_tilde_path(first_line.substr(open.length(), first_line.length() - open.length() - close.length()))};
 	return o;
+}
+
+
+bool prompt_confirm(const fs::path& tplate_path, const fs::path& output_file)
+{
+	std::cout << "CONFIRM OVERWRITE:\n"
+	<< "template file: [" << tplate_path.string() << "]\n"
+	<< "destination:   [" << output_file.string() << "]\n";
+
+	char c {0};
+
+	while( c != 'y' && c != 'Y' && c != 'n' && c != 'N' ){
+		std::cout << "[y/n]: ";
+		std::cin >> c;
+	}
+
+	return (c == 'y' || c == 'Y');
+}
+
+
+bool prompt_abort()
+{
+	std::cout << "\nWould you like to abort, or proceed to next config?" << std::endl;
+
+	char c {0};
+
+	while( c != 'a' && c != 'A' && c != 'p' && c != 'P' ){
+		std::cout << "[A/a]bort, [P/p]roceed: ";
+		std::cin >> c;
+	}
+
+	return (c == 'a' || c == 'A');
+}
+
+
+void backup(const fs::path& file_path)
+{
+	if(!fs::exists(file_path))
+		throw SysthemeException("Invalid backup file given: [" + file_path.string() + "]");
+
+	fs::path output { User::get_home() / ".systheme-backups" / file_path.filename() };
+
+	fs::create_directories(output);
+	output /= systheme::helpers::get_time_stamp();
+	OPTS_VBOSE_1("backing up [" + file_path.string() + "] to [" + output.string() + "]")
+	fs::copy_file(file_path, output, fs::copy_options::overwrite_existing);
 }

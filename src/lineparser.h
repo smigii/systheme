@@ -12,34 +12,38 @@
 
 typedef std::unordered_map<std::string, std::string> umapstr;
 
-class LineParser {
+namespace systheme{
 
-private:
-	const umapstr* symbol_map;
-	const std::string open {OPEN};
-	const std::string close {CLOSE};
-	std::string operand;
-	bool done {false};
+	class LineParser {
 
-	size_t start_idx {0};
-	size_t end_idx {0};
-	size_t npos {std::string::npos};
+	private:
+		const umapstr* symbol_map;
+		const std::string open {OPEN};
+		const std::string close {CLOSE};
+		std::string operand;
+		bool done {false};
 
-	[[nodiscard]] std::string strip_braces();
+		size_t start_idx {0};
+		size_t end_idx {0};
+		size_t npos {std::string::npos};
 
-	[[nodiscard]] std::string process_key(const std::string& key);
+		[[nodiscard]] std::string strip_braces();
 
-	// Finds the next symbol in the operand and replaces it with the
-	// value from the symbol table.
-	void process_next_symbol();
+		[[nodiscard]] std::string process_key(const std::string& key);
 
-public:
+		// Finds the next symbol in the operand and replaces it with the
+		// value from the symbol table.
+		void process_next_symbol();
 
-	explicit LineParser(const umapstr* symbol_map);
+	public:
 
-	std::string process(std::string& line);
+		explicit LineParser(const umapstr* symbol_map);
 
-};
+		std::string process(std::string& line);
+
+	};
+
+}
 
 
 #endif //SYSTHEME_LINEPARSER_H
