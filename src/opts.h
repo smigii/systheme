@@ -9,12 +9,8 @@
 #include <stdexcept>
 #include <filesystem>
 
-// TODO: Find workaround to checking flag everytime
-// Maybe use a function pointer that is set once in
-// init(), then IF_VERBOSE(STRING) would call the
-// set fn. One function does nothing, the other prints.
-#define IF_VERBOSE(out) if(Opts::fl_v()) std::cout << out;
-#define IF_VERBOSE_ENDL(out) if(Opts::fl_v()) std::cout << out << std::endl;
+#define OPTS_VBOSE_1(msg) Opts::verbose1_ptr(msg);
+#define OPTS_VBOSE_2(msg) Opts::verbose2_ptr(msg);
 
 namespace fs = std::filesystem;
 
@@ -32,7 +28,8 @@ private:
 	static char** argv;
 
 	static bool opt_s;				// Simulation mode
-	static bool opt_v;				// Verbose mode (takes precedence over Quiet option)
+	static bool opt_v;				// Verbose mode (takes precedence over quiet mode)
+	static bool opt_V;				// EXTRA verbose mode (takes precedence over verbose mode)
 	static bool opt_q;				// Quiet mode
 	static bool opt_b;				// Backup
 	static bool opt_c;				// Confirm
@@ -42,11 +39,15 @@ private:
 	static void proc_rem_args();
 	static void HELP_ME();
 
+	static void verbose_out(const std::string& message);
+	static void verbose_dummy(const std::string& message);
+
 public:
 
 	static void init(int argc, char** argv);
 
 	[[nodiscard]] static bool fl_s(); // Simulation mode
+	[[nodiscard]] static bool fl_V(); // Extra verbose mode
 	[[nodiscard]] static bool fl_v(); // Verbose mode
 	[[nodiscard]] static bool fl_q(); // Quiet mode
 	[[nodiscard]] static bool fl_b(); // Backup mode
@@ -54,6 +55,9 @@ public:
 
 	[[nodiscard]] static std::string get_theme();
 	[[nodiscard]] static fs::path get_theme_path();
+
+	static void (*verbose1_ptr)(const std::string&);
+	static void (*verbose2_ptr)(const std::string&);
 
 };
 

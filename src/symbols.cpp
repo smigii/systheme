@@ -34,16 +34,17 @@ t_symbolmap make_local_symbol_map(std::unique_ptr<json>& json, const t_scope_map
 
 t_symbolmap systheme::make_symbol_map(const fs::path& theme_path)
 {
+	OPTS_VBOSE_1("creating symbol map for: [" + theme_path.string() + "]")
 	// Load in JSON
-	IF_VERBOSE_ENDL("loading JSON theme: [" + theme_path.string() + "]")
+	OPTS_VBOSE_2("loading JSON theme: [" + theme_path.string() + "]")
 	std::unique_ptr<json> derulo {load_json_theme(theme_path)};
 
 	// Create a map for specified includes.
 	// Maps an include (program theme) to a symbol map.
-	IF_VERBOSE_ENDL("handling includes for: [" + theme_path.string() + "]")
+	OPTS_VBOSE_2("handling includes for: [" + theme_path.string() + "]")
 	t_scope_map scope_map {make_scope_map(derulo)};
 
-	IF_VERBOSE_ENDL("finishing symbol map for: [" + theme_path.string() + "]")
+	OPTS_VBOSE_2("finishing symbol map for: [" + theme_path.string() + "]")
 	return {make_local_symbol_map(derulo, scope_map)};
 }
 

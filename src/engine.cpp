@@ -80,17 +80,17 @@ void systheme::apply_system_theme(const std::string& theme)
 	for(const auto& kvp : derulo.items()){
 		const std::string& config {kvp.key()};
 		const std::string& conf_theme {kvp.value()};
-		IF_VERBOSE("\nprocessing config [" + config + "], theme [" + conf_theme + "]\n")
+		OPTS_VBOSE_1("\nprocessing config [" + config + "], theme [" + conf_theme + "]")
 		try{ apply_program_theme(config, conf_theme); }
 		catch(const EngineException& e) {
-			IF_VERBOSE("ERROR: " + e.msg())
+			OPTS_VBOSE_1("ERROR: " + e.msg())
 			std::string id {"*ERROR: config [" + config + "], theme [" + conf_theme + "]\n"};
 			errors.push_back(id + e.msg());
 		}
 	}
 
 	if(!errors.empty()){
-		IF_VERBOSE_ENDL("\nERROR REPORT:")
+		OPTS_VBOSE_1("\nERROR REPORT:")
 		for(const std::string& err : errors)
 			std::cout << err << "\n\n";
 	}
@@ -151,7 +151,7 @@ umapstr extract_symbols(const fs::path& theme_path)
 
 void process_template(const fs::path& tplate_file, const t_symbolmap& symbol_map)
 {
-	IF_VERBOSE_ENDL("processing template: [" + tplate_file.string() + "]")
+	OPTS_VBOSE_1("processing template: [" + tplate_file.string() + "]")
 
 	std::ifstream ifs(tplate_file);
 	fs::path output {process_first_line(ifs)};
@@ -165,7 +165,7 @@ void process_template(const fs::path& tplate_file, const t_symbolmap& symbol_map
 	if(Opts::fl_s())
 		return;
 
-	IF_VERBOSE_ENDL("writing to: [" + output.string() + "]")
+	OPTS_VBOSE_1("writing to: [" + output.string() + "]")
 
 	while(std::getline(ifs, raw_line)){
 		std::string out {parser.process(raw_line)};
