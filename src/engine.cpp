@@ -8,16 +8,16 @@
 #include <filesystem>
 #include <unordered_map>
 #include <fstream>
+#include <nlohmann/json.hpp>
 
 #include "utils/GLOBALS.h"
 #include "user.h"
 #include "opts.h"
+#include "symbols.h"
 #include "lineparser.h"
 
 namespace fs = std::filesystem;
-typedef std::unordered_map<std::string, std::string> umapstr;
 
-#include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
 // --------------------------------------------------------------
@@ -30,16 +30,8 @@ using json = nlohmann::json;
 /// \throws EngineException error if no template file found.
 [[nodiscard]] fs::path get_template_file(const fs::path& directory);
 
-/// Reads through a theme file and adds all symbols to an
-/// unordered map.
-/// \param _out_map Unordered map symbols will be added to.
-/// \param theme_path Path to a configs theme.json file.
-/// \param parse_includes Default false, determines if the files "includes"
-/// section is to be parsed.
-umapstr extract_symbols(const fs::path& theme_path);
-
 // Parse a validated template file line-by-line and process each line.
-void process_template(const fs::path& tplate_file, const umapstr& symbol_map);
+void process_template(const fs::path& tplate_file, const t_symbolmap& symbol_map);
 
 fs::path process_first_line(std::ifstream& ifs);
 
@@ -60,10 +52,10 @@ public:
 // --------------------------------------------------------------
 // --- FHANDLE --------------------------------------------------
 
-void STengine::process_config_theme(const std::string& config, const std::string& theme)
+void systheme::apply_program_theme(const std::string& program, const std::string& theme)
 {
 	// Validate template.* file
-	fs::path program_dir {User::get_data_path() / config};
+	fs::path program_dir {User::get_data_path() / program};
 	fs::path tplate_file {get_template_file(program_dir)};
 
 	// Validate theme.json file
@@ -73,12 +65,12 @@ void STengine::process_config_theme(const std::string& config, const std::string
 	}
 
 	// Get the symbol map
-	umapstr symbol_map = extract_symbols(theme_path);
+	t_symbolmap symbol_map {systheme::make_symbol_map(theme_path)};
 
 	process_template(tplate_file, symbol_map);
 }
 
-void STengine::process_systheme(const std::string& systheme)
+void systheme::apply_system_theme(const std::string& theme)
 {
 	json derulo;
 	std::ifstream ifs(Opts::get_theme_path());
@@ -89,7 +81,7 @@ void STengine::process_systheme(const std::string& systheme)
 		const std::string& config {kvp.key()};
 		const std::string& conf_theme {kvp.value()};
 		IF_VERBOSE("\nprocessing config [" + config + "], theme [" + conf_theme + "]\n")
-		try{ process_config_theme(config, conf_theme); }
+		try{ apply_program_theme(config, conf_theme); }
 		catch(const EngineException& e) {
 			IF_VERBOSE("ERROR: " + e.msg())
 			std::string id {"*ERROR: config [" + config + "], theme [" + conf_theme + "]\n"};
@@ -157,7 +149,7 @@ umapstr extract_symbols(const fs::path& theme_path)
 	return result;
 }
 
-void process_template(const fs::path& tplate_file, const umapstr& symbol_map)
+void process_template(const fs::path& tplate_file, const t_symbolmap& symbol_map)
 {
 	IF_VERBOSE_ENDL("processing template: [" + tplate_file.string() + "]")
 

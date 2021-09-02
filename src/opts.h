@@ -9,6 +9,10 @@
 #include <stdexcept>
 #include <filesystem>
 
+// TODO: Find workaround to checking flag everytime
+// Maybe use a function pointer that is set once in
+// init(), then IF_VERBOSE(STRING) would call the
+// set fn. One function does nothing, the other prints.
 #define IF_VERBOSE(out) if(Opts::fl_v()) std::cout << out;
 #define IF_VERBOSE_ENDL(out) if(Opts::fl_v()) std::cout << out << std::endl;
 

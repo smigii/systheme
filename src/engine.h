@@ -8,11 +8,11 @@
 #include <string>
 
 // Main Systheme interface.
-namespace STengine{
+namespace systheme{
 
-	void process_config_theme(const std::string& config, const std::string& theme);
+	void apply_program_theme(const std::string& program, const std::string& theme);
 
-	void process_systheme(const std::string& theme);
+	void apply_system_theme(const std::string& theme);
 
 }
 

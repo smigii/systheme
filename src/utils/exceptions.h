@@ -10,21 +10,6 @@
 
 // === Exceptions ========================================================
 
-class InvalidThemeException : public std::exception {
-private:
-	std::string path;
-
-public:
-	explicit InvalidThemeException(std::string path)
-		: path{std::move(path)} {
-
-	}
-
-	[[nodiscard]] std::string msg () const noexcept{
-		return "Theme does not exist, " + path;
-	}
-};
-
 class NoConfigDirException : public std::exception {
 private:
 	std::string path;
@@ -38,6 +23,18 @@ public:
 	[[nodiscard]] std::string msg () const noexcept{
 		return "No config directory exists, checked " + path;
 	}
+};
+
+
+class SysthemeException : public std::exception {
+private:
+	std::string message;
+
+public:
+	explicit SysthemeException(std::string message)
+	: message{std::move(message)} {}
+
+	[[nodiscard]] std::string msg () const noexcept { return message; }
 };
 
 #endif //SYSTHEME_EXCEPTIONS_H
