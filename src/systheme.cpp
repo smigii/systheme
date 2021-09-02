@@ -16,17 +16,6 @@ int main(int argc, char* argv[]) {
 }
 
 /* ----------------------------------------------------------------------------
- * TODO: USE POLYMORPHIC SYMBOL NODES FOR WRITING OUTPUT (engine.cpp)
- *
- *		Rather than passing getting a string and giving it to an ofstream,
- *		give an ofstream to a node. The node will decide how to modify the
- *		ofstream. This will allow us to create a file node that can write the
- *		contents of a file to the ofstream when needed, so that we don't have
- *		to store the file contents in our symbol map, we can instead just
- *		store the path.
- *
- *
- *
  *	TODO: Convert LineParser class to Parser
  *
  *		No reason to have a LineParser, we are only ever processing a full
