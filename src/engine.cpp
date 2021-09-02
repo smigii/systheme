@@ -49,7 +49,10 @@ void systheme::apply_program_theme(const std::string& program, const std::string
 
 	// Get the symbol map
 	t_symbolmap symbol_map {systheme::symbols::make_symbol_map(theme_path)};
-	process_template(tplate_file, symbol_map);
+	try{ process_template(tplate_file, symbol_map); }
+	catch(const SysthemeException& e) {
+		throw SysthemeException("Error processing template: [" + tplate_file.string() + "]\n" + e.msg());
+	}
 }
 
 
@@ -103,7 +106,6 @@ void process_template(const fs::path& tplate_path, const t_symbolmap& symbol_map
 	fs::path output_path {process_first_line(ifs)};
 	if(!fs::exists(output_path))
 		throw SysthemeException("Invalid target path " + output_path.string());
-	systheme::LineParser parser(&symbol_map);
 	std::string raw_line;
 
 	// If simulation mode
@@ -118,9 +120,9 @@ void process_template(const fs::path& tplate_path, const t_symbolmap& symbol_map
 	OPTS_VBOSE_1("writing to: [" + output_path.string() + "]")
 
 	std::ofstream ofs(output_path);
+	systheme::LineParser parser(&symbol_map, ofs);
 	while(std::getline(ifs, raw_line)){
-		std::string out {parser.process(raw_line)};
-		ofs << out << std::endl;
+		parser.process(raw_line);
 	}
 }
 

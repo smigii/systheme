@@ -25,11 +25,11 @@ namespace detail
 
 enum class parse_event_t : uint8_t
 {
-    /// the parser read `{` and started to process a JSON object
+    /// the parser read `{` and started to write_symbol a JSON object
     object_start,
     /// the parser read `}` and finished processing a JSON object
     object_end,
-    /// the parser read `[` and started to process a JSON array
+    /// the parser read `[` and started to write_symbol a JSON array
     array_start,
     /// the parser read `]` and finished processing a JSON array
     array_end,

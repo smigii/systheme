@@ -8,8 +8,14 @@
 #include <string>
 #include <unordered_map>
 #include <filesystem>
+#include <memory>
 
-typedef std::unordered_map<std::string, std::string> t_symbolmap;
+namespace systheme{
+	class SymbolNode;
+}
+
+typedef std::unordered_map<std::string, std::unique_ptr<systheme::SymbolNode>> t_symbolmap;
+typedef std::unordered_map<std::string, t_symbolmap> t_scope_map;
 
 namespace fs = std::filesystem;
 

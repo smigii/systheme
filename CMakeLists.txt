@@ -11,6 +11,7 @@ set(SOURCES
     src/engine.cpp src/engine.h
     src/lineparser.cpp src/lineparser.h
     src/symbols.cpp src/symbols.h
+    src/symbolnode.cpp src/symbolnode.h
 )
 
 add_executable(${PROJECT_NAME} src/systheme.cpp ${SOURCES})

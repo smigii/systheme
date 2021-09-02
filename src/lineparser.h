@@ -7,10 +7,12 @@
 
 #include <string>
 #include <unordered_map>
+#include <memory>
 
 #include "utils/mrworldwide.h"
+#include "symbolnode.h"
 
-typedef std::unordered_map<std::string, std::string> t_symbol_map;
+typedef std::unordered_map<std::string, std::unique_ptr<systheme::SymbolNode>> t_symbolmap;
 
 namespace systheme{
 
@@ -18,29 +20,37 @@ namespace systheme{
 	class LineParser {
 
 	private:
-		const t_symbol_map* symbol_map;
+		const t_symbolmap* symbol_map;
 		const std::string open {OPEN};
 		const std::string close {CLOSE};
-		std::string operand;
-		bool done {false};
+		const size_t npos {std::string::npos};
 
+		std::string current_line;
+		std::ofstream& ofs;
+
+		bool done {false};
+		size_t prev_idx {0};
 		size_t start_idx {0};
 		size_t end_idx {0};
-		size_t npos {std::string::npos};
+		size_t line_num {2}; // Since first line is DST and is not written
 
 		[[nodiscard]] std::string strip_braces();
 
-		[[nodiscard]] std::string process_key(const std::string& key);
+		[[nodiscard]] bool check_idxs() const;
 
-		// Finds the next symbol in the operand and replaces it with the
-		// value from the symbol table.
 		void process_next_symbol();
+
+		void write_regular_segment();
+
+		void next_symbol_idxs();
+
+		void reset();
 
 	public:
 
-		explicit LineParser(const t_symbol_map* symbol_map);
+		explicit LineParser(const t_symbolmap* symbol_map, std::ofstream& ofs);
 
-		std::string process(std::string& line);
+		void process(std::string& line);
 
 	};
 
