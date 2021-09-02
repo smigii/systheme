@@ -11,7 +11,7 @@
 #include <nlohmann/json.hpp>
 
 #include "utils/helpers.h"
-#include "utils/GLOBALS.h"
+#include "utils/mrworldwide.h"
 #include "utils/exceptions.h"
 #include "user.h"
 #include "opts.h"

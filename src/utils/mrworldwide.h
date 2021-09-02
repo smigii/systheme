@@ -2,8 +2,8 @@
 // Created by smigii on 2021-08-30.
 //
 
-#ifndef SYSTHEME_GLOBALS_H
-#define SYSTHEME_GLOBALS_H
+#ifndef SYSTHEME_MRWORLDWIDE_H
+#define SYSTHEME_MRWORLDWIDE_H
 
 #define OPEN "[%"
 #define CLOSE "%]"
@@ -12,4 +12,4 @@
 
 #define DIRECTIVE_FILE "%FILE"
 
-#endif //SYSTHEME_GLOBALS_H
+#endif //SYSTHEME_MRWORLDWIDE_H

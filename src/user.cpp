@@ -29,12 +29,13 @@ void User::init()
 
 	// Check for a ~/.config directory
 	if( !fs::is_directory(get_st_path()) ){
-		throw NoConfigDirException(get_st_path() );
+		fs::create_directories(home_path / ".config/systheme");
 	}
 }
 
 fs::path User::get_st_path()
 {
+	// TODO: move all your configs from systheme2 to systheme
 	return fs::path{home_path / ".config/systheme2/"};
 }
 
@@ -54,11 +55,5 @@ fs::path User::get_home()
 }
 
 fs::path User::get_data_path() {
-	return fs::path{get_st_path() / "data/"};
+	return fs::path{get_st_path() / "data"};
 }
-
-
-/*
- * Why are we returning all these by value? Unless I'm mistaken, rvalues and RVO.
- * https://www.scribd.com/document/316704010/Want-Speed-Pass-by-Value
- */

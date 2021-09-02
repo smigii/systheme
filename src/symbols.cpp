@@ -10,7 +10,7 @@
 #include <nlohmann/json.hpp>
 
 #include "utils/exceptions.h"
-#include "utils/GLOBALS.h"
+#include "utils/mrworldwide.h"
 #include "lineparser.h"
 #include "user.h"
 #include "opts.h"

@@ -8,7 +8,7 @@
 #include <string>
 #include <unordered_map>
 
-#include "utils/GLOBALS.h"
+#include "utils/mrworldwide.h"
 
 typedef std::unordered_map<std::string, std::string> t_symbol_map;
 
