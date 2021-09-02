@@ -15,14 +15,45 @@ int main(int argc, char* argv[]) {
 
 }
 
-/*
- * TODO:
+/* ----------------------------------------------------------------------------
+ * TODO: USE POLYMORPHIC SYMBOL NODES FOR WRITING OUTPUT (engine.cpp)
  *
- *	CACHE RESULTS OF SYMBOL TABLES???
- *		It is possible the same symbol table will be included in multiple program
- *		themes (including alacritty in multiple themes to get 16 colors). Should
- *		have some kind of global cache that keeps track of what has been processed.
+ *		Rather than passing getting a string and giving it to an ofstream,
+ *		give an ofstream to a node. The node will decide how to modify the
+ *		ofstream. This will allow us to create a file node that can write the
+ *		contents of a file to the ofstream when needed, so that we don't have
+ *		to store the file contents in our symbol map, we can instead just
+ *		store the path.
  *
  *
  *
- */
+ *	TODO: Convert LineParser class to Parser
+ *
+ *		No reason to have a LineParser, we are only ever processing a full
+ *		file, not a just a few lines.
+ *
+ *
+ *
+ * 	TODO: LOCAL VARIABLES IN PROGRAM THEMES
+ *
+ * 		In addition to "includes" and "symbols", add a "locals" section which
+ * 		defines local variables. Example
+ *		"locals" : {
+ *			"var1" : "#282828"
+ *		},
+ *		"symbols" {
+ *			"some_color" : {"%LOCAL" : "var1"}
+ *		}
+ *
+ *
+ *
+ *	TODO: CACHE RESULTS OF SYMBOL TABLES???
+ *
+ *		It is possible the same symbol table will be included in multiple
+ *		program themes (including alacritty in multiple themes to get 16
+ *		colors). Should have some kind of global cache that keeps track of
+ *		what has been processed.
+ *
+ *
+ *
+ * ------------------------------------------------------------------------- */
