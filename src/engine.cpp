@@ -29,7 +29,7 @@ using json = nlohmann::json;
 
 void process_template(const fs::path& tplate_path, const t_symbolmap& symbol_map);
 
-fs::path process_first_line(std::ifstream& ifs);
+[[nodiscard]] fs::path process_first_line(std::ifstream& ifs);
 
 bool prompt_confirm(const fs::path& tplate_path, const fs::path& output_file);
 

@@ -3,7 +3,6 @@
 #include "user.h"
 #include "opts.h"
 #include "engine.h"
-#include "symbols.h"
 
 int main(int argc, char* argv[]) {
 
@@ -24,11 +23,6 @@ int main(int argc, char* argv[]) {
  *		themes (including alacritty in multiple themes to get 16 colors). Should
  *		have some kind of global cache that keeps track of what has been processed.
  *
- *  THEME FILE MACROS - These macros are to be used in json theme files.
- *      [%FILE: /path/to/file%] -> Will return the contents of a file when queried
- *      "some_symbol": "[%FILE: PROGRAM/extra/minimal%] would replace any [%prompt%]
- *      symbols with the contents of the file ~/.config/systheme/data/CURRENT_CONFIG/extra/minimal.
- *      Relative paths would be relative to ~/.config/systheme/data/
  *
  *
  */

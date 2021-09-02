@@ -4,11 +4,9 @@
 
 #include "lineparser.h"
 
-#include "user.h"
-
 #include "utils/helpers.h"
 
-systheme::LineParser::LineParser(const umapstr *symbol_map)
+systheme::LineParser::LineParser(const t_symbol_map *symbol_map)
 : symbol_map{symbol_map} {}
 
 std::string systheme::LineParser::process(std::string& line)

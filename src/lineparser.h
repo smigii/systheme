@@ -10,14 +10,15 @@
 
 #include "utils/GLOBALS.h"
 
-typedef std::unordered_map<std::string, std::string> umapstr;
+typedef std::unordered_map<std::string, std::string> t_symbol_map;
 
 namespace systheme{
 
+	// TODO: This whole class just feels kinda gross???
 	class LineParser {
 
 	private:
-		const umapstr* symbol_map;
+		const t_symbol_map* symbol_map;
 		const std::string open {OPEN};
 		const std::string close {CLOSE};
 		std::string operand;
@@ -37,7 +38,7 @@ namespace systheme{
 
 	public:
 
-		explicit LineParser(const umapstr* symbol_map);
+		explicit LineParser(const t_symbol_map* symbol_map);
 
 		std::string process(std::string& line);
 
