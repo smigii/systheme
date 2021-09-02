@@ -57,8 +57,8 @@ std::string LineParser::process_key(const std::string& key)
 	std::string result;
 	const auto iter {symbol_map->find(key)};
 
-	// Opt will define how to handle missing symbols
-	// will implement later.
+	// TODO: Implement missing symbol handling
+	// Behavior should be specified by user.
 	if(iter == symbol_map->end())
 		result = "";
 	else

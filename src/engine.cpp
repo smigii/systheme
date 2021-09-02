@@ -11,6 +11,7 @@
 #include <nlohmann/json.hpp>
 
 #include "utils/GLOBALS.h"
+#include "utils/exceptions.h"
 #include "user.h"
 #include "opts.h"
 #include "symbols.h"
@@ -65,9 +66,13 @@ void systheme::apply_program_theme(const std::string& program, const std::string
 	}
 
 	// Get the symbol map
-	t_symbolmap symbol_map {systheme::make_symbol_map(theme_path)};
-
-	process_template(tplate_file, symbol_map);
+	try {
+		t_symbolmap symbol_map {systheme::make_symbol_map(theme_path)};
+		process_template(tplate_file, symbol_map);
+	}
+	catch(const SysthemeException& e){
+		std::cout << e.msg();
+	}
 }
 
 void systheme::apply_system_theme(const std::string& theme)
@@ -111,42 +116,6 @@ fs::path get_template_file(const fs::path& directory)
 		}
 	}
 	throw EngineException("No template file in directory " + directory.string());
-}
-
-// This is fucking disgusting and needs to be optimized
-// return a unique pointer
-umapstr extract_symbols(const fs::path& theme_path)
-{
-	json derulo;
-	std::ifstream ifs(theme_path);
-	std::string delim {DELIM};
-	umapstr result;
-
-	ifs >> derulo;
-
-	// Handle includes
-	std::unordered_map<std::string, umapstr> scopes;
-	for(const auto& include : derulo["includes"].items()){
-		std::string inc_config {include.key()};
-		std::string inc_theme {include.value()};
-		fs::path path {User::get_data_path() / inc_config / "themes" / inc_theme};
-		scopes.insert(std::make_pair(inc_config, extract_symbols(path)));
-	}
-
-	for(const auto& kvp : derulo["symbols"].items()){
-		std::string key {kvp.key()};
-		std::string val;
-		if(kvp.value().type() == json::value_t::string)
-			val = kvp.value();
-		else if(kvp.value().type() == json::value_t::object){
-			std::string scope = kvp.value().items().begin().key();
-			std::string key = kvp.value().items().begin().value();
-			val = scopes.find(scope)->second.find(key)->second;
-		}
-		result.insert(std::make_pair(key, val));
-	}
-
-	return result;
 }
 
 void process_template(const fs::path& tplate_file, const t_symbolmap& symbol_map)

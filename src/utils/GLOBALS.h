@@ -8,5 +8,8 @@
 #define OPEN "[%"
 #define CLOSE "%]"
 #define DELIM ": "
+#define DIRECTIVE_SYMBOL '%'
+
+#define DIRECTIVE_FILE "%FILE"
 
 #endif //SYSTHEME_GLOBALS_H
