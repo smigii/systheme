@@ -16,7 +16,26 @@ int main(int argc, char* argv[]) {
 }
 
 /* ----------------------------------------------------------------------------
- *	TODO: Convert LineParser class to Parser
+ *	TODO: TEMPLATE HEADER REWORK
+ *
+ *		Template headers should be checked more thouroughly.
+ *		Syntax as following...
+ *		[%
+ *		DST /path/to/destination
+ *		REFRESH /path/to/refresh/script
+ *		--more to come--
+ *		%]
+ *		Should just tokenize and parse, ignoring whitespace.
+ *
+ *
+ *	TODO: REFRESH SCRIPTS
+ *
+ *		Implement (safely) refresh scripts.
+ *		Scrip path should be in template header.
+ *
+ *
+ *
+ *	TODO: CONVERT LINE PARSER TO PARSER
  *
  *		No reason to have a LineParser, we are only ever processing a full
  *		file, not a just a few lines.
