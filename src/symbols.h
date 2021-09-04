@@ -14,6 +14,7 @@ namespace systheme{
 	class SymbolNode;
 }
 
+// TODO: Do we really need a unique_ptr? Should be able to use RVO
 typedef std::unordered_map<std::string, std::unique_ptr<systheme::SymbolNode>> t_symbolmap;
 typedef std::unordered_map<std::string, t_symbolmap> t_scope_map;
 
