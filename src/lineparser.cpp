@@ -34,7 +34,7 @@ void systheme::LineParser::process_next_symbol()
 {
 	if(done) return;
 	std::string key {strip_braces()};
-	systheme::helpers::trim(key);
+	systheme::utils::trim(key);
 
 	const auto iter {symbol_map->find(key)};
 

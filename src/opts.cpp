@@ -7,8 +7,9 @@
 #include <iostream>
 #include <unistd.h>
 
-#include "user.h"
+#include "utils/mrworldwide.h"
 #include "utils/exceptions.h"
+#include "user.h"
 
 
 int Opts::argc {-1};
@@ -103,14 +104,14 @@ void Opts::proc_rem_args()
 
 void Opts::HELP_ME()
 {
+	std::cout << "\nsystheme version " << ST_VERSION << "\n";
 	std::cout << "\nUsage: systheme [--help | --usage]\n";
 	std::cout << "\nUsage: systheme [THEME] [OPTION...]\n";
 	std::cout << "\t-s\tSimulation mode, no changes are made to filesystem. Sets -v flag.\n";
 	std::cout << "\t-v\tVerbose, prints detailed output at each step.\n";
 	std::cout << "\t-q\tQuiet, surpress all output except error messages.\n";
 	std::cout << "\t-b\tBackup, creates backups of all overwritten files in ~/.systheme_backups/\n";
-	std::cout << "\t-c\tConfirm, prompts user for input before each file is overwritten.\n";
-	std::cout << "\n";
+	std::cout << "\t-c\tConfirm, prompts user for input before each file is overwritten.\n" << std::endl;
 }
 
 
