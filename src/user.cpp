@@ -35,8 +35,7 @@ void User::init()
 
 fs::path User::get_st_path()
 {
-	// TODO: move all your configs from systheme2 to systheme
-	return fs::path{home_path / ".config/systheme2/"};
+	return fs::path{home_path / ".config/systheme/"};
 }
 
 fs::path User::expand_tilde_path(const fs::path& path)
