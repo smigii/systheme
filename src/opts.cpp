@@ -94,7 +94,7 @@ void Opts::proc_rem_args()
 	// Simulation mode activates Verbose mode.
 	if(opt_s) opt_v = true;
 	// Verbose level 2 overrides verbose level 1
-	if(opt_V) opt_v = false;
+	if(opt_V) opt_v = true;
 	// Either verbose turns off Quiet mode.
 	if(opt_v || opt_V) opt_q = false;
 
