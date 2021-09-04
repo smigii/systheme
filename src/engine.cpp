@@ -179,7 +179,7 @@ void backup(const fs::path& file_path)
 	fs::path output { User::get_home() / ".systheme-backups" / file_path.filename() };
 
 	fs::create_directories(output);
-	output /= systheme::helpers::get_time_stamp();
+	output /= systheme::utils::get_time_stamp();
 	OPTS_VBOSE_1("backing up [" + file_path.string() + "] to [" + output.string() + "]")
 	fs::copy_file(file_path, output, fs::copy_options::overwrite_existing);
 }
