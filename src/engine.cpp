@@ -42,6 +42,7 @@ void backup(const fs::path& file_path);
 void systheme::apply_program_theme(const std::string& program, const std::string& theme)
 {
 	OPTS_VBOSE_1("\nprocessing config [" + program + "], theme [" + theme + "]")
+	Opts::inc_vbose_indent();
 
 	// Validate template.* file
 	fs::path program_dir {User::get_data_path() / program};
@@ -56,6 +57,8 @@ void systheme::apply_program_theme(const std::string& program, const std::string
 	catch(const SysthemeException& e) {
 		throw SysthemeException("Error processing template: [" + tplate_file.string() + "]\n" + e.msg());
 	}
+
+	Opts::dec_vbose_indent();
 }
 
 
@@ -103,6 +106,7 @@ fs::path get_template_file(const fs::path& directory)
 void process_template(const fs::path& tplate_path, const t_symbolmap& symbol_map)
 {
 	OPTS_VBOSE_1("processing template: [" + tplate_path.string() + "]")
+	Opts::inc_vbose_indent();
 
 	OPTS_VBOSE_2("processing template header...")
 	systheme::parsers::TemplateHeaderInfo header(tplate_path);
@@ -143,6 +147,8 @@ void process_template(const fs::path& tplate_path, const t_symbolmap& symbol_map
 		OPTS_VBOSE_1("running post-script: [" + header.get_post_path().string() + "]")
 		system(header.get_post_path().string().c_str());
 	}
+
+	Opts::dec_vbose_indent();
 }
 
 

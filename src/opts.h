@@ -34,6 +34,8 @@ private:
 	static bool opt_c;				// Confirm
 	static std::string theme;		// Name of file theme
 
+	static std::string vbose_indent;
+
 	static void proc_first_arg();
 	static void proc_rem_args();
 	static void HELP_ME();
@@ -57,6 +59,9 @@ public:
 
 	static void (*verbose1_ptr)(const std::string&);
 	static void (*verbose2_ptr)(const std::string&);
+
+	static void inc_vbose_indent();
+	static void dec_vbose_indent();
 
 };
 

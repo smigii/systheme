@@ -29,7 +29,7 @@ namespace systheme::utils {
 		Tokenizer();
 		explicit Tokenizer(std::string input, std::string delim=" \t\n\v\f\r");
 
-		void set_word(std::string input);
+		void set_string(std::string input);
 
 		void set_delimiter(std::string delim);
 

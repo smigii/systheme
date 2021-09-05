@@ -16,16 +16,13 @@ namespace systheme::parsers {
 
 	private:
 		const fs::path template_path;
-		std::vector<std::string> tokens;
 
 		fs::path destination;
 		fs::path post_path;
 		fs::path pre_path;
 		size_t first_line_num;
 
-		void tokenize_header();
-		bool check_close_token(long offset);
-		void process_tokens();
+		[[nodiscard]] bool process_tokens(const std::vector<std::string>& tokens);
 
 	public:
 		explicit TemplateHeaderInfo(fs::path tplate_path);

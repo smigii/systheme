@@ -11,6 +11,7 @@
 #include "utils/exceptions.h"
 #include "user.h"
 
+#define INDENT_STR "|   "
 
 int Opts::argc {-1};
 char** Opts::argv {nullptr};
@@ -21,6 +22,7 @@ bool Opts::opt_q {false};
 bool Opts::opt_b {false};
 bool Opts::opt_c {false};
 std::string Opts::theme;
+std::string Opts::vbose_indent;
 
 void (*Opts::verbose1_ptr)(const std::string&) = Opts::verbose_dummy;
 void (*Opts::verbose2_ptr)(const std::string&) = Opts::verbose_dummy;
@@ -131,12 +133,28 @@ bool Opts::fl_c() {return opt_c;}
 
 std::string Opts::get_theme() {return theme;}
 
+
 void Opts::verbose_out(const std::string& message)
 {
-	std::cout << message << "\n";
+	std::cout << vbose_indent << message << "\n";
 }
 
+
 void Opts::verbose_dummy(const std::string& message) {}
+
+
+void Opts::inc_vbose_indent()
+{
+	vbose_indent += INDENT_STR;
+}
+
+void Opts::dec_vbose_indent()
+{
+	if(vbose_indent.empty())
+		return;
+	else
+		vbose_indent = vbose_indent.substr(0, vbose_indent.length() - std::string(INDENT_STR).length());
+}
 
 
 

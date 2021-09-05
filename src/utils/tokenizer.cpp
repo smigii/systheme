@@ -73,7 +73,7 @@ void systheme::utils::Tokenizer::add_all_tokens(std::vector<std::string> &vector
 	}
 }
 
-void systheme::utils::Tokenizer::set_word(std::string input)
+void systheme::utils::Tokenizer::set_string(std::string input)
 {
 	word = std::move(input);
 	reset();
