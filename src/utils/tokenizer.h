@@ -6,7 +6,7 @@
 #define SYSTHEME_TOKENIZER_H
 
 #include <string>
-#include <queue>
+#include <vector>
 
 namespace systheme::utils {
 
@@ -26,7 +26,7 @@ namespace systheme::utils {
 		void idxs_to_first_token(); // needed since we can't set size_t to negative value
 
 	public:
-		Tokenizer() = default;
+		Tokenizer();
 		explicit Tokenizer(std::string input, std::string delim=" \t\n\v\f\r");
 
 		void set_word(std::string input);
@@ -35,13 +35,14 @@ namespace systheme::utils {
 
 		void reset();
 
-		[[nodiscard]] std::queue<std::string> get_all_tokens();
+		[[nodiscard]] std::vector<std::string> get_all_tokens();
 
-		void add_all_tokens(std::queue<std::string>& queue);
+		void add_all_tokens(std::vector<std::string>& queue);
 
 		[[nodiscard]] std::string next_token();
 
 		[[nodiscard]] bool is_done() const;
+
 	};
 
 }

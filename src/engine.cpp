@@ -17,6 +17,7 @@
 #include "opts.h"
 #include "symbols.h"
 #include "lineparser.h"
+#include "templateheaderinfo.h"
 
 namespace fs = std::filesystem;
 
@@ -29,8 +30,6 @@ using json = nlohmann::json;
 
 void process_template(const fs::path& tplate_path, const t_symbolmap& symbol_map);
 
-[[nodiscard]] fs::path process_first_line(std::ifstream& ifs);
-
 bool prompt_confirm(const fs::path& tplate_path, const fs::path& output_file);
 
 bool prompt_abort();
@@ -42,6 +41,8 @@ void backup(const fs::path& file_path);
 
 void systheme::apply_program_theme(const std::string& program, const std::string& theme)
 {
+	OPTS_VBOSE_1("\nprocessing config [" + program + "], theme [" + theme + "]")
+
 	// Validate template.* file
 	fs::path program_dir {User::get_data_path() / program};
 	fs::path tplate_file {get_template_file(program_dir)};
@@ -49,6 +50,8 @@ void systheme::apply_program_theme(const std::string& program, const std::string
 
 	// Get the symbol map
 	t_symbolmap symbol_map {systheme::symbols::make_symbol_map(theme_path)};
+
+	// Process
 	try{ process_template(tplate_file, symbol_map); }
 	catch(const SysthemeException& e) {
 		throw SysthemeException("Error processing template: [" + tplate_file.string() + "]\n" + e.msg());
@@ -66,7 +69,6 @@ void systheme::apply_system_theme(const std::string& theme)
 	for(const auto& kvp : derulo.items()){
 		const std::string& program {kvp.key()};
 		const std::string& conf_theme {kvp.value()};
-		OPTS_VBOSE_1("\nprocessing config [" + program + "], theme [" + conf_theme + "]")
 		try{ apply_program_theme(program, conf_theme); }
 		catch(const SysthemeException& e) {
 			std::string id {"*ERROR: program [" + program + "], theme [" + conf_theme + "]\n"};
@@ -102,20 +104,31 @@ void process_template(const fs::path& tplate_path, const t_symbolmap& symbol_map
 {
 	OPTS_VBOSE_1("processing template: [" + tplate_path.string() + "]")
 
+	OPTS_VBOSE_2("processing template header...")
+	systheme::parsers::TemplateHeaderInfo header(tplate_path);
+	OPTS_VBOSE_2("template header OK")
+
 	std::ifstream ifs(tplate_path);
-	fs::path output_path {process_first_line(ifs)};
-	if(!fs::exists(output_path))
-		throw SysthemeException("Invalid target path " + output_path.string());
+	fs::path output_path {header.get_dst()};
 	std::string raw_line;
+	// Move ifs to first line after header
+	// -1 for off-by-one, -1 to move it back one for while loop below
+	for (int i = 0; getline(ifs, raw_line) && i < header.get_first_line_num()-2; i++) {}
 
 	// If simulation mode
 	if(Opts::fl_s()){
-		std::cout << "SIMULATION MODE -- No changes written\n";
+		std::cout << "SIMULATION MODE -- No changes written, no scripts run\n";
 		return;
 	}
 
 	if(Opts::fl_c() && !prompt_confirm(tplate_path, output_path)) return;
 	if(Opts::fl_b()) backup(output_path);
+
+	// TODO: EW EW EW EW EW
+	if(!header.get_pre_path().empty()) {
+		OPTS_VBOSE_1("running pre-script: [" + header.get_pre_path().string() + "]")
+		system(header.get_pre_path().string().c_str());
+	}
 
 	OPTS_VBOSE_1("writing to: [" + output_path.string() + "]")
 
@@ -124,18 +137,12 @@ void process_template(const fs::path& tplate_path, const t_symbolmap& symbol_map
 	while(std::getline(ifs, raw_line)){
 		parser.process(raw_line);
 	}
-}
 
-
-fs::path process_first_line(std::ifstream& ifs)
-{
-	std::string open {OPEN};
-	std::string close {CLOSE};
-	std::string first_line;
-	std::getline(ifs, first_line);
-	// [%~/path/to/dst%] -> /home/user/path/to/dst
-	fs::path o {User::expand_tilde_path(first_line.substr(open.length(), first_line.length() - open.length() - close.length()))};
-	return o;
+	// TODO: EW EW EW EW EW
+	if(!header.get_post_path().empty()) {
+		OPTS_VBOSE_1("running post-script: [" + header.get_post_path().string() + "]")
+		system(header.get_post_path().string().c_str());
+	}
 }
 
 

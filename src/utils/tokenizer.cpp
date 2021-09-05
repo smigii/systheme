@@ -4,6 +4,10 @@
 
 #include "tokenizer.h"
 
+systheme::utils::Tokenizer::Tokenizer()
+: Tokenizer("") {}
+
+
 systheme::utils::Tokenizer::Tokenizer(std::string input, std::string delim)
 : word{std::move(input)}, delimiter{std::move(delim)}, done{false}
 {
@@ -11,9 +15,9 @@ systheme::utils::Tokenizer::Tokenizer(std::string input, std::string delim)
 }
 
 
-std::queue<std::string> systheme::utils::Tokenizer::get_all_tokens()
+std::vector<std::string> systheme::utils::Tokenizer::get_all_tokens()
 {
-	std::queue<std::string> result;
+	std::vector<std::string> result;
 	add_all_tokens(result);
 	return result;
 }
@@ -21,8 +25,10 @@ std::queue<std::string> systheme::utils::Tokenizer::get_all_tokens()
 
 std::string systheme::utils::Tokenizer::next_token()
 {
-	if(is_done())
+	if(is_done()) {
+		done = true;
 		return "";
+	}
 
 	std::string result {word.substr(start_idx, end_idx - start_idx + 1)};
 
@@ -54,14 +60,16 @@ void systheme::utils::Tokenizer::update_idxs()
 
 bool systheme::utils::Tokenizer::is_done() const
 {
-	return done || idxs_npos();
+	return done || idxs_npos() || word.empty();
 }
 
 
-void systheme::utils::Tokenizer::add_all_tokens(std::queue<std::string> &queue)
+void systheme::utils::Tokenizer::add_all_tokens(std::vector<std::string> &vector)
 {
 	while(!done){
-		queue.emplace(next_token());
+		std::string next {next_token()};
+		if(!next.empty())
+			vector.push_back(next);
 	}
 }
 
@@ -81,6 +89,10 @@ void systheme::utils::Tokenizer::reset()
 	done = false;
 	idxs_to_first_token();
 }
+
+
+
+
 
 
 

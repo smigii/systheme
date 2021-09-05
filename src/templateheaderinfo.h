@@ -5,7 +5,6 @@
 #ifndef SYSTHEME_TEMPLATEHEADERINFO_H
 #define SYSTHEME_TEMPLATEHEADERINFO_H
 
-#include <queue>
 #include <vector>
 #include <filesystem>
 
@@ -17,23 +16,24 @@ namespace systheme::parsers {
 
 	private:
 		const fs::path template_path;
+		std::vector<std::string> tokens;
+
 		fs::path destination;
-		fs::path script_path;
-		int first_line {-1};
-		std::queue<std::string> tokens;
+		fs::path post_path;
+		fs::path pre_path;
+		size_t first_line_num;
 
-		bool file_done{false};
-		bool header_done {false};
-
-		void process_current_tokens();
-
-		std::string get_next_tokens();
+		void tokenize_header();
+		bool check_close_token(long offset);
+		void process_tokens();
 
 	public:
-		TemplateHeaderInfo(fs::path tplate_path);
+		explicit TemplateHeaderInfo(fs::path tplate_path);
 
 		[[nodiscard]] fs::path get_dst() const;
-		[[nodiscard]] fs::path get_script_path() const;
+		[[nodiscard]] fs::path get_post_path() const;
+		[[nodiscard]] fs::path get_pre_path() const;
+		[[nodiscard]] size_t get_first_line_num() const;
 
 	};
 
