@@ -2,8 +2,8 @@
 // Created by smigii on 2021-09-01.
 //
 
-#ifndef SYSTHEME_SYMBOLS_H
-#define SYSTHEME_SYMBOLS_H
+#ifndef SYSTHEME_SYMBOLMAP_H
+#define SYSTHEME_SYMBOLMAP_H
 
 #include <string>
 #include <unordered_map>
@@ -19,10 +19,10 @@ typedef std::unordered_map<std::string, t_symbolmap> t_scope_map;
 
 namespace fs = std::filesystem;
 
-namespace systheme::symbols{
+namespace systheme::symbol {
 
 	t_symbolmap make_symbol_map(const fs::path& theme_path);
 
 }
 
-#endif //SYSTHEME_SYMBOLS_H
+#endif //SYSTHEME_SYMBOLMAP_H

@@ -2,7 +2,7 @@
 // Created by smigii on 2021-08-29.
 //
 
-#include "engine.h"
+#include "interface.h"
 
 #include <iostream>
 #include <filesystem>
@@ -13,7 +13,7 @@
 #include "utils/exceptions.h"
 #include "user.h"
 #include "opts.h"
-#include "symbols.h"
+#include "symbolmap.h"
 #include "lineparser.h"
 #include "templateheaderinfo.h"
 
@@ -37,7 +37,7 @@ void backup(const fs::path& file_path);
 // --------------------------------------------------------------
 // --- FHANDLE --------------------------------------------------
 
-void systheme::apply_program_theme(const std::string& program, const std::string& theme)
+void systheme::interface::apply_program_theme(const std::string& program, const std::string& theme)
 {
 	OPTS_VBOSE_1("\nprocessing [" + program + "::" + theme + "]")
 	systheme::opts::VerboseIndentScope vis;
@@ -48,7 +48,7 @@ void systheme::apply_program_theme(const std::string& program, const std::string
 	fs::path theme_path {program_dir / "themes" / theme};
 
 	// Get the symbol map
-	t_symbolmap symbol_map {systheme::symbols::make_symbol_map(theme_path)};
+	t_symbolmap symbol_map {systheme::symbol::make_symbol_map(theme_path)};
 
 	// Process
 	try{ process_template(tplate_file, symbol_map); }
@@ -59,7 +59,7 @@ void systheme::apply_program_theme(const std::string& program, const std::string
 }
 
 
-void systheme::apply_system_theme(const std::string& theme)
+void systheme::interface::apply_system_theme(const std::string& theme)
 {
 	json derulo;
 	std::ifstream ifs(Opts::get_theme_path());

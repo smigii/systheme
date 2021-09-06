@@ -4,7 +4,7 @@ IN PROGRESS
 A convenient way to manage and create custom themes for your unix environment.
 
 ## Overview
-Systheme works by adding in symbols to your config files, then referencing those symbols in JSON 
+Systheme works by adding in symbol to your config files, then referencing those symbol in JSON 
 theme files that you create. Essentially a glorified search/replace that helps you manage your
 pretty terminal colors (or whatever you can fit in your config files).
 
@@ -25,7 +25,7 @@ This is the directory that will hold the config files for all your programs.
       * config_2.abc
       * config_n.jkl
 ```
-The `template.*` file will hold the config file, and will contain the symbols that are 
+The `template.*` file will hold the config file, and will contain the symbol that are 
 to be managed by systheme. For example, you may put in your vim template...
 ```
 colorscheme: [%colorscheme%]

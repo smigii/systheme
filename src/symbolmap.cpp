@@ -2,7 +2,7 @@
 // Created by smigii on 2021-09-01.
 //
 
-#include "symbols.h"
+#include "symbolmap.h"
 
 #include <iostream>
 #include <memory>
@@ -51,7 +51,7 @@ std::unique_ptr<systheme::SymbolNode> process_scope(const key_value_scope& kvs);
 // --------------------------------------------------------------
 // --- HEADER IMPLEMENTATIONS -----------------------------------
 
-t_symbolmap systheme::symbols::make_symbol_map(const fs::path& theme_path)
+t_symbolmap systheme::symbol::make_symbol_map(const fs::path& theme_path)
 {
 	try {
 		std::string theme_name {User::format_theme_path(theme_path)};
@@ -96,7 +96,7 @@ t_scope_map make_scope_map(std::unique_ptr<json>& json)
 		std::string inc_config {include.key()};
 		std::string inc_theme {include.value()};
 		fs::path path {User::get_data_path() / inc_config / "themes" / inc_theme};
-		scope_map.insert(std::make_pair(inc_config, systheme::symbols::make_symbol_map(path)));
+		scope_map.insert(std::make_pair(inc_config, systheme::symbol::make_symbol_map(path)));
 	}
 
 	// Return address same as local address, NVRO confirmed

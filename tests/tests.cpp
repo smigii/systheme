@@ -7,7 +7,7 @@
 
 #include "../src/user.h"
 #include "../src/opts.h"
-#include "../src/symbols.h"
+#include "../src/symbolmap.h"
 #include <iostream>
 
 TEST_CASE("test")
