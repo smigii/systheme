@@ -7,38 +7,44 @@
 #include <iostream>
 #include <unistd.h>
 
-#include "utils/mrworldwide.h"
-#include "utils/exceptions.h"
+#include "mrworldwide.h"
+#include "exceptions.h"
 #include "user.h"
 
-#define INDENT_STR "|   "
+Opts* Opts::instance_ptr {nullptr};
 
-int Opts::argc {-1};
-char** Opts::argv {nullptr};
-bool Opts::opt_s {false};
-bool Opts::opt_v {false};
-bool Opts::opt_V {false};
-bool Opts::opt_q {false};
-bool Opts::opt_b {false};
-bool Opts::opt_c {false};
-std::string Opts::theme;
-std::string Opts::vbose_indent;
-
-void (*Opts::verbose1_ptr)(const std::string&) = Opts::verbose_dummy;
-void (*Opts::verbose2_ptr)(const std::string&) = Opts::verbose_dummy;
-
-Opts::Opts(){}
-
+Opts::Opts() = default;
 
 void Opts::init(int _argc, char **_argv)
 {
-	argc = _argc;
-	argv = _argv;
+	if(Opts::instance_ptr)
+		return;
+	else
+		Opts::instance_ptr = new Opts;
 
-	proc_first_arg();
-	proc_rem_args();
+	instance_ptr->argc = _argc;
+	instance_ptr->argv = _argv;
+	instance_ptr->opt_s = false;
+
+	instance_ptr->opt_v = false;
+	instance_ptr->opt_V = false;
+	instance_ptr->opt_b = false;
+	instance_ptr->opt_c = false;
+
+	instance_ptr->proc_first_arg();
+	instance_ptr->proc_rem_args();
 }
 
+void Opts::shred()
+{
+	delete instance_ptr;
+	instance_ptr = nullptr;
+}
+
+Opts *Opts::instance()
+{
+	return instance_ptr;
+}
 
 void Opts::proc_first_arg()
 {
@@ -55,6 +61,9 @@ void Opts::proc_first_arg()
 	if(theme == "--usage" || theme == "--help"){
 		HELP_ME();
 		exit(EXIT_SUCCESS);
+	} else if(theme == "-v" || theme == "--version") {
+		std::cout << "v" << ST_VERSION << std::endl;
+		exit(EXIT_SUCCESS);
 	}
 
 	optind++;
@@ -62,7 +71,6 @@ void Opts::proc_first_arg()
 	if(!fs::exists(path))
 		throw OptsException("Invalid theme path: " + path);
 }
-
 
 void Opts::proc_rem_args()
 {
@@ -78,9 +86,6 @@ void Opts::proc_rem_args()
 			case 'V':
 				opt_V = true;
 				break;
-			case 'q':
-				opt_q = true;
-				break;
 			case 'b':
 				opt_b = true;
 				break;
@@ -95,15 +100,8 @@ void Opts::proc_rem_args()
 	if(opt_s) opt_v = true;
 	// Verbose level 2 overrides verbose level 1
 	if(opt_V) opt_v = true;
-	// Either verbose turns off Quiet mode.
-	if(opt_v || opt_V) opt_q = false;
-
-	// Set verbosity pointers
-	if(opt_v) {Opts::verbose1_ptr = &Opts::verbose_out;}
-	if(opt_V) {Opts::verbose2_ptr = &Opts::verbose_out;}
 
 }
-
 
 void Opts::HELP_ME()
 {
@@ -112,50 +110,24 @@ void Opts::HELP_ME()
 	std::cout << "\nUsage: systheme [THEME] [OPTION...]\n";
 	std::cout << "\t-s\tSimulation mode, no changes are made to filesystem. Sets -v flag.\n";
 	std::cout << "\t-v\tVerbose, prints detailed output at each step.\n";
-	std::cout << "\t-q\tQuiet, surpress all output except error messages.\n";
+	std::cout << "\t-V\tExtra verbose, prints more detailed output at each step.\n";
 	std::cout << "\t-b\tBackup, creates backups of all overwritten files in ~/.systheme_backups/\n";
 	std::cout << "\t-c\tConfirm, prompts user for input before each file is overwritten.\n" << std::endl;
 }
 
-
-fs::path Opts::get_theme_path()
-{
-	return fs::path{User::get_st_path() / "systhemes/" / theme};
-}
-
+fs::path Opts::get_theme_path() { return fs::path{User::get_st_path() / "systhemes/" / theme}; }
+std::string Opts::get_theme() {return theme;}
 
 bool Opts::fl_s() {return opt_s;}
 bool Opts::fl_v() {return opt_v;}
 bool Opts::fl_V() {return opt_V;}
-bool Opts::fl_q() {return opt_q;}
 bool Opts::fl_b() {return opt_b;}
 bool Opts::fl_c() {return opt_c;}
 
 
-std::string Opts::get_theme() {return theme;}
 
 
-void Opts::verbose_out(const std::string& message)
-{
-	std::cout << vbose_indent << message << "\n";
-}
 
-
-void Opts::verbose_dummy(const std::string& message) {}
-
-
-void Opts::inc_vbose_indent()
-{
-	vbose_indent += INDENT_STR;
-}
-
-void Opts::dec_vbose_indent()
-{
-	if(vbose_indent.empty())
-		return;
-	else
-		vbose_indent = vbose_indent.substr(0, vbose_indent.length() - std::string(INDENT_STR).length());
-}
 
 
 

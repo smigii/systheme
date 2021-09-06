@@ -11,8 +11,8 @@
 #include "utils/tokenizer.h"
 #include "utils/exceptions.h"
 #include "utils/mrworldwide.h"
-#include "opts.h"
-#include "user.h"
+#include "utils/verbosityhandler.h"
+#include "utils/user.h"
 
 #define COMMENT "#"
 #define DESTINATION "DST"
@@ -26,7 +26,8 @@ systheme::templates::TemplateHeader::TemplateHeader(fs::path  tplate_path)
 	std::vector<std::string> tokens;
 	std::ifstream ifs {template_path};
 	std::string line;
-	systheme::opts::VerboseIndentScope vis;
+	opts::VerbosityHandler vh; // Indent scope
+	vh.indent_scope();
 
 	// First line
 	getline(ifs, line);
@@ -55,7 +56,7 @@ systheme::templates::TemplateHeader::TemplateHeader(fs::path  tplate_path)
 	if(destination.empty())
 		throw SysthemeException("Template header must include DST directive");
 
-	OPTS_VBOSE_2("template header OK")
+	vh.out_2("template header OK");
 }
 
 
@@ -65,6 +66,8 @@ bool systheme::templates::TemplateHeader::process_tokens(const std::vector<std::
 	// Empty line
 	if(tokens.empty())
 		return false;
+
+	opts::VerbosityHandler vh;
 
 	std::string directive {tokens.front()};
 	size_t argc {tokens.size()};
@@ -77,7 +80,7 @@ bool systheme::templates::TemplateHeader::process_tokens(const std::vector<std::
 		destination = fs::path(User::expand_tilde_path(tokens.at(1)));
 		if(!fs::exists(destination))
 			throw SysthemeException(DESTINATION ": invalid destination path provided: [" + destination.string() + "]");
-		OPTS_VBOSE_2("template header destination path OK")
+		vh.out_2("template header destination path OK");
 	}
 	else if(directive == POST_SCRIPT) {
 		if(argc != 2)
@@ -85,7 +88,7 @@ bool systheme::templates::TemplateHeader::process_tokens(const std::vector<std::
 		post_path = fs::path(User::expand_tilde_path(tokens.at(1)));
 		if(!fs::exists(post_path))
 			throw SysthemeException(POST_SCRIPT ": invalid post-script path provided");
-		OPTS_VBOSE_2("template post-script path OK")
+		vh.out_2("template post-script path OK");
 	}
 	else if(directive == PRE_SCRIPT) {
 		if(argc != 2)
@@ -93,7 +96,7 @@ bool systheme::templates::TemplateHeader::process_tokens(const std::vector<std::
 		pre_path = fs::path(User::expand_tilde_path(tokens.at(1)));
 		if(!fs::exists(pre_path))
 			throw SysthemeException(PRE_SCRIPT": invalid pre-script path provided");
-		OPTS_VBOSE_2("template header pre-script path OK")
+		vh.out_2("template header pre-script path OK");
 	}
 	else if(directive == CLOSE) {
 		if(argc != 1)

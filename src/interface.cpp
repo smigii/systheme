@@ -10,7 +10,8 @@
 #include <vector>
 
 #include "utils/exceptions.h"
-#include "opts.h"
+#include "utils/opts.h"
+#include "utils/verbosityhandler.h"
 #include "templateparser.h"
 
 namespace fs = std::filesystem;
@@ -28,8 +29,10 @@ bool prompt_abort();
 void systheme::interface::apply_program_theme(const std::string& program, const std::string& theme)
 {
 	std::string string {program + "::" + theme};
-	OPTS_VBOSE_1("\nprocessing [" + string + "]")
-	systheme::opts::VerboseIndentScope vis;
+
+	opts::VerbosityHandler vh;
+	vh.out_1("\nprocessing [" + string + "]");
+	vh.indent_scope();
 
 	try{ systheme::templates::process_template(program, theme); }
 	catch(const SysthemeException& e) {
@@ -42,7 +45,7 @@ void systheme::interface::apply_program_theme(const std::string& program, const 
 void systheme::interface::apply_system_theme(const std::string& theme)
 {
 	json derulo;
-	std::ifstream ifs(Opts::get_theme_path());
+	std::ifstream ifs(Opts::instance()->get_theme_path());
 	std::vector<std::string> errors;
 	ifs >> derulo;
 
@@ -52,14 +55,15 @@ void systheme::interface::apply_system_theme(const std::string& theme)
 		try{ apply_program_theme(program, conf_theme); }
 		catch(const SysthemeException& e) {
 			std::string id {"*ERROR: program [" + program + "], theme [" + conf_theme + "]\n"};
-			OPTS_VBOSE_1("\n" + id + e.msg())
+			std::cout << "\n" << id << e.msg();
 			errors.push_back(id);
 			if (prompt_abort()) {exit(-1);}
 		}
 	}
 
 	if(!errors.empty()){
-		OPTS_VBOSE_1("\nERROR REPORT:")
+		opts::VerbosityHandler vh;
+		vh.out_1("\nERROR REPORT:");
 		for(const std::string& err : errors)
 			std::cout << err << "\n\n";
 	}

@@ -1,5 +1,5 @@
-#include "user.h"
-#include "opts.h"
+#include "utils/user.h"
+#include "utils/opts.h"
 #include "interface.h"
 
 #include <iostream>
@@ -12,7 +12,9 @@ int main(int argc, char* argv[]) {
 
 	User::init();
 	Opts::init(argc, argv);
-	systheme::interface::apply_system_theme(Opts::get_theme());
+	systheme::interface::apply_system_theme(Opts::instance()->get_theme());
+
+	Opts::shred();
 
 	return 0;
 

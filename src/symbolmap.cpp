@@ -10,8 +10,8 @@
 #include "utils/exceptions.h"
 #include "utils/mrworldwide.h"
 #include "templateparser.h"
-#include "user.h"
-#include "opts.h"
+#include "utils/user.h"
+#include "utils/verbosityhandler.h"
 #include "symbolnode.h"
 
 using json = nlohmann::json;
@@ -55,11 +55,12 @@ t_symbolmap systheme::symbol::make_symbol_map(const fs::path& theme_path)
 {
 	try {
 		std::string theme_name {User::format_theme_path(theme_path)};
-		OPTS_VBOSE_1("creating symbol map for: [" + theme_name + "]")
-		systheme::opts::VerboseIndentScope vis;
+		opts::VerbosityHandler vh;
+		vh.out_1("creating symbol map for: [" + theme_name + "]");
+		vh.indent_scope();
 
 		// Load in JSON
-		OPTS_VBOSE_2("loading JSON file: [" + theme_path.string() + "]")
+		vh.out_2("loading JSON file: [" + theme_path.string() + "]");
 		std::unique_ptr<json> derulo {load_json_theme(theme_path)};
 
 		t_scopemap include_map;
@@ -67,19 +68,19 @@ t_symbolmap systheme::symbol::make_symbol_map(const fs::path& theme_path)
 		if(derulo->contains("includes")) {
 			// Create a map for specified includes.
 			// Maps an include (program theme) to a symbol map.
-			OPTS_VBOSE_2("handling includes for: [" + theme_name + "]")
+			vh.out_2("handling includes for: [" + theme_name + "]");
 			include_map = make_include_map(derulo);
 		}
 
 		if(derulo->contains("locals")) {
-			OPTS_VBOSE_2("handling locals for: [" + theme_name + "]")
+			vh.out_2("handling locals for: [" + theme_name + "]");
 			add_locals(derulo, include_map);
 		}
 
 		if(!derulo->contains("symbols"))
 			throw SysthemeException("No \"symbols\" section found in theme: [" + theme_path.string() + "]");
 
-		OPTS_VBOSE_2("finishing symbol map for: [" + theme_name + "]")
+		vh.out_2("finishing symbol map for: [" + theme_name + "]");
 		return {combine_maps(derulo, include_map)};
 	}
 	catch(const SysthemeException& e) {

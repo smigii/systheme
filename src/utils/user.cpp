@@ -7,7 +7,7 @@
 #include <unistd.h>
 #include <filesystem>
 
-#include "utils/exceptions.h"
+#include "exceptions.h"
 
 namespace fs = std::filesystem;
 

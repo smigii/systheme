@@ -5,8 +5,8 @@
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 
-#include "../src/user.h"
-#include "../src/opts.h"
+#include "../src/utils/user.h"
+#include "../src/utils/opts.h"
 #include "../src/symbolmap.h"
 #include <iostream>
 

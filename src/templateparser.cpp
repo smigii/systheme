@@ -11,8 +11,9 @@
 #include "utils/mrworldwide.h"
 #include "utils/helpers.h"
 #include "utils/exceptions.h"
-#include "opts.h"
-#include "user.h"
+#include "utils/opts.h"
+#include "utils/user.h"
+#include "utils/verbosityhandler.h"
 #include "symbolmap.h"
 #include "symbolnode.h"
 #include "templateheader.h"
@@ -159,12 +160,14 @@ void backup(const fs::path& file_path);
 
 void systheme::templates::process_template(const std::string &program, const std::string &theme)
 {
-	OPTS_VBOSE_2("finding [" + program + "] template")
+	opts::VerbosityHandler vh;
+
+	vh.out_2("finding [" + program + "] template");
 	fs::path template_path {get_template_path(program)};
 	fs::path theme_path {get_theme_path(program, theme)};
 	t_symbolmap symbol_map {systheme::symbol::make_symbol_map(theme_path)};
 
-	OPTS_VBOSE_2("processing template header...")
+	vh.out_2("processing template header...");
 	systheme::templates::TemplateHeader header(template_path);
 
 	std::ifstream ifs(template_path);
@@ -175,21 +178,22 @@ void systheme::templates::process_template(const std::string &program, const std
 	for (int i = 0; getline(ifs, raw_line) && i < header.get_first_line_num()-2; i++) {}
 
 	// If simulation mode
-	if(Opts::fl_s()){
-		OPTS_VBOSE_1("SIMULATION MODE -- No changes written, no scripts run")
+	Opts* opts {Opts::instance()};
+	if(opts->fl_s()){
+		vh.out_1("SIMULATION MODE -- No changes written, no scripts run");
 		return;
 	}
 
-	if(Opts::fl_c() && !prompt_confirm(template_path, output_path)) return;
-	if(Opts::fl_b()) backup(output_path);
+	if(opts->fl_c() && !prompt_confirm(template_path, output_path)) return;
+	if(opts->fl_b()) backup(output_path);
 
 	// TODO: EW EW EW EW EW
 	if(!header.get_pre_path().empty()) {
-		OPTS_VBOSE_1("running pre-script: [" + header.get_pre_path().string() + "]")
+		vh.out_1("running pre-script: [" + header.get_pre_path().string() + "]");
 		system(header.get_pre_path().string().c_str());
 	}
 
-	OPTS_VBOSE_1("writing to: [" + output_path.string() + "]")
+	vh.out_1("writing to: [" + output_path.string() + "]");
 
 	std::ofstream ofs(output_path);
 	TemplateLineParser parser(&symbol_map, ofs);
@@ -199,7 +203,7 @@ void systheme::templates::process_template(const std::string &program, const std
 
 	// TODO: EW EW EW EW EW
 	if(!header.get_post_path().empty()) {
-		OPTS_VBOSE_1("running post-script: [" + header.get_post_path().string() + "]")
+		vh.out_1("running post-script: [" + header.get_post_path().string() + "]");
 		system(header.get_post_path().string().c_str());
 	}
 }
@@ -251,10 +255,11 @@ void backup(const fs::path& file_path)
 	if(!fs::exists(file_path))
 		throw SysthemeException("Invalid backup file given: [" + file_path.string() + "]");
 
+	opts::VerbosityHandler vh;
 	fs::path output { User::get_home() / ".systheme-backups" / file_path.filename() };
 
 	fs::create_directories(output);
 	output /= systheme::utils::get_time_stamp();
-	OPTS_VBOSE_1("backing up [" + file_path.string() + "] to [" + output.string() + "]")
+	vh.out_1("backing up [" + file_path.string() + "] to [" + output.string() + "]");
 	fs::copy_file(file_path, output, fs::copy_options::overwrite_existing);
 }
