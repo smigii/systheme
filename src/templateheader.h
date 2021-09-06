@@ -2,8 +2,8 @@
 // Created by smigii on 2021-09-03.
 //
 
-#ifndef SYSTHEME_TEMPLATEHEADERINFO_H
-#define SYSTHEME_TEMPLATEHEADERINFO_H
+#ifndef SYSTHEME_TEMPLATEHEADER_H
+#define SYSTHEME_TEMPLATEHEADER_H
 
 #include <vector>
 #include <filesystem>
@@ -12,7 +12,7 @@ namespace fs = std::filesystem;
 
 namespace systheme::parsers {
 
-	class TemplateHeaderInfo {
+	class TemplateHeader {
 
 	private:
 		const fs::path template_path;
@@ -25,7 +25,7 @@ namespace systheme::parsers {
 		[[nodiscard]] bool process_tokens(const std::vector<std::string>& tokens);
 
 	public:
-		explicit TemplateHeaderInfo(fs::path tplate_path);
+		explicit TemplateHeader(fs::path tplate_path);
 
 		[[nodiscard]] fs::path get_dst() const;
 		[[nodiscard]] fs::path get_post_path() const;
@@ -37,4 +37,4 @@ namespace systheme::parsers {
 }
 
 
-#endif //SYSTHEME_TEMPLATEHEADERINFO_H
+#endif //SYSTHEME_TEMPLATEHEADER_H

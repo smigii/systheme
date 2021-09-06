@@ -10,7 +10,7 @@
 #include <filesystem>
 #include <memory>
 
-namespace systheme{
+namespace systheme {
 	class SymbolNode;
 }
 

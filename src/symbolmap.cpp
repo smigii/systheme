@@ -11,7 +11,7 @@
 
 #include "utils/exceptions.h"
 #include "utils/mrworldwide.h"
-#include "lineparser.h"
+#include "templateparser.h"
 #include "user.h"
 #include "opts.h"
 #include "symbolnode.h"

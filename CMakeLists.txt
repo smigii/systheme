@@ -9,11 +9,11 @@ set(SOURCES
     src/opts.cpp src/opts.h
     src/user.cpp src/user.h
         src/interface.cpp src/interface.h
-    src/lineparser.cpp src/lineparser.h
         src/symbolmap.cpp src/symbolmap.h
         src/symbolnode.cpp src/symbolnode.h
-    src/templateheaderinfo.cpp src/templateheaderinfo.h
-    src/utils/tokenizer.cpp src/utils/tokenizer.h
+        src/templateparser.cpp src/templateparser.h
+        src/templateheader.cpp src/templateheader.h
+        src/utils/tokenizer.cpp src/utils/tokenizer.h
 )
 
 add_executable(${PROJECT_NAME} src/systheme.cpp ${SOURCES})
