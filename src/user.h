@@ -15,7 +15,7 @@ namespace fs = std::filesystem;
 // with a private constructor, cannot be instantiated.
 class User {
 private:
-	User();	// 'Static class', should not be able to instantiate.
+	User() = default;	// 'Static class', should not be able to instantiate.
 	static std::string name;
 	static fs::path home_path;
 
@@ -33,6 +33,9 @@ public:
 
 	// Expand ~/* to /home/user/*
 	[[nodiscard]] static fs::path expand_tilde_path(const fs::path& path);
+
+	// Extract the program name from a given path
+	[[nodiscard]] static std::string format_theme_path(const fs::path& theme_path);
 
 };
 

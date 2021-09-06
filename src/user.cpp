@@ -15,6 +15,7 @@ namespace fs = std::filesystem;
 std::string User::name;
 fs::path User::home_path;
 
+
 // Must be called once before being used. Stores
 // the needed paths, so we don't need to keep making system
 // calls.
@@ -33,10 +34,12 @@ void User::init()
 	}
 }
 
+
 fs::path User::get_st_path()
 {
 	return fs::path{home_path / ".config/systheme/"};
 }
+
 
 fs::path User::expand_tilde_path(const fs::path& path)
 {
@@ -48,11 +51,19 @@ fs::path User::expand_tilde_path(const fs::path& path)
 	}
 }
 
+
 fs::path User::get_home()
 {
 	return fs::path{home_path};
 }
 
+
 fs::path User::get_data_path() {
 	return fs::path{get_st_path() / "data"};
+}
+
+std::string User::format_theme_path(const fs::path &theme_path) {
+	std::string program {theme_path.parent_path().parent_path().filename().string()};
+	std::string theme {theme_path.filename().string()};
+	return program + "::" + theme;
 }

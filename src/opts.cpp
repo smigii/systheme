@@ -74,12 +74,9 @@ void Opts::proc_rem_args()
 				break;
 			case 'v':
 				opt_v = true;
-				Opts::verbose1_ptr = &Opts::verbose_out;
 				break;
 			case 'V':
 				opt_V = true;
-				Opts::verbose1_ptr = &Opts::verbose_out;
-				Opts::verbose2_ptr = &Opts::verbose_out;
 				break;
 			case 'q':
 				opt_q = true;
@@ -100,6 +97,10 @@ void Opts::proc_rem_args()
 	if(opt_V) opt_v = true;
 	// Either verbose turns off Quiet mode.
 	if(opt_v || opt_V) opt_q = false;
+
+	// Set verbosity pointers
+	if(opt_v) {Opts::verbose1_ptr = &Opts::verbose_out;}
+	if(opt_V) {Opts::verbose2_ptr = &Opts::verbose_out;}
 
 }
 

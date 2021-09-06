@@ -26,6 +26,7 @@ systheme::parsers::TemplateHeaderInfo::TemplateHeaderInfo(fs::path  tplate_path)
 	std::vector<std::string> tokens;
 	std::ifstream ifs {template_path};
 	std::string line;
+	systheme::opts::VerboseIndentScope vis;
 
 	// First line
 	getline(ifs, line);
@@ -54,6 +55,7 @@ systheme::parsers::TemplateHeaderInfo::TemplateHeaderInfo(fs::path  tplate_path)
 	if(destination.empty())
 		throw SysthemeException("Template header must include DST directive");
 
+	OPTS_VBOSE_2("template header OK")
 }
 
 
@@ -66,7 +68,7 @@ bool systheme::parsers::TemplateHeaderInfo::process_tokens(const std::vector<std
 	std::string directive {tokens.front()};
 	size_t argc {tokens.size()};
 
-	if(directive == "#"){}
+	if(directive == COMMENT){}
 
 	else if(directive == DESTINATION){
 		if(argc != 2)

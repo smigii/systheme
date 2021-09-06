@@ -6,8 +6,6 @@
 
 #include <iostream>
 #include <filesystem>
-#include <unordered_map>
-#include <fstream>
 #include <nlohmann/json.hpp>
 
 #include "utils/helpers.h"
@@ -41,8 +39,8 @@ void backup(const fs::path& file_path);
 
 void systheme::apply_program_theme(const std::string& program, const std::string& theme)
 {
-	OPTS_VBOSE_1("\nprocessing config [" + program + "], theme [" + theme + "]")
-	Opts::inc_vbose_indent();
+	OPTS_VBOSE_1("\nprocessing [" + program + "::" + theme + "]")
+	systheme::opts::VerboseIndentScope vis;
 
 	// Validate template.* file
 	fs::path program_dir {User::get_data_path() / program};
@@ -58,7 +56,6 @@ void systheme::apply_program_theme(const std::string& program, const std::string
 		throw SysthemeException("Error processing template: [" + tplate_file.string() + "]\n" + e.msg());
 	}
 
-	Opts::dec_vbose_indent();
 }
 
 
@@ -100,17 +97,16 @@ fs::path get_template_file(const fs::path& directory)
 				return i.path();
 		}
 	}
-	throw SysthemeException("No template file in directory " + directory.string());
+	throw SysthemeException("No template file in directory: [" + directory.string() + "]");
 }
 
 void process_template(const fs::path& tplate_path, const t_symbolmap& symbol_map)
 {
 	OPTS_VBOSE_1("processing template: [" + tplate_path.string() + "]")
-	Opts::inc_vbose_indent();
+	systheme::opts::VerboseIndentScope vim;
 
 	OPTS_VBOSE_2("processing template header...")
 	systheme::parsers::TemplateHeaderInfo header(tplate_path);
-	OPTS_VBOSE_2("template header OK")
 
 	std::ifstream ifs(tplate_path);
 	fs::path output_path {header.get_dst()};
@@ -121,7 +117,7 @@ void process_template(const fs::path& tplate_path, const t_symbolmap& symbol_map
 
 	// If simulation mode
 	if(Opts::fl_s()){
-		std::cout << "SIMULATION MODE -- No changes written, no scripts run\n";
+		OPTS_VBOSE_1("SIMULATION MODE -- No changes written, no scripts run")
 		return;
 	}
 
@@ -148,7 +144,6 @@ void process_template(const fs::path& tplate_path, const t_symbolmap& symbol_map
 		system(header.get_post_path().string().c_str());
 	}
 
-	Opts::dec_vbose_indent();
 }
 
 

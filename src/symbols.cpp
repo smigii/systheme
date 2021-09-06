@@ -54,17 +54,20 @@ std::unique_ptr<systheme::SymbolNode> process_scope(const key_value_scope& kvs);
 t_symbolmap systheme::symbols::make_symbol_map(const fs::path& theme_path)
 {
 	try {
-		OPTS_VBOSE_1("creating symbol map for: [" + theme_path.string() + "]")
+		std::string theme_name {User::format_theme_path(theme_path)};
+		OPTS_VBOSE_1("creating symbol map for: [" + theme_name + "]")
+		systheme::opts::VerboseIndentScope vis;
+
 		// Load in JSON
-		OPTS_VBOSE_2("loading JSON theme: [" + theme_path.string() + "]")
+		OPTS_VBOSE_2("loading JSON file: [" + theme_path.string() + "]")
 		std::unique_ptr<json> derulo {load_json_theme(theme_path)};
 
 		// Create a map for specified includes.
 		// Maps an include (program theme) to a symbol map.
-		OPTS_VBOSE_2("handling includes for: [" + theme_path.string() + "]")
+		OPTS_VBOSE_2("handling includes for: [" + theme_name + "]")
 		t_scope_map scope_map {make_scope_map(derulo)};
 
-		OPTS_VBOSE_2("finishing symbol map for: [" + theme_path.string() + "]")
+		OPTS_VBOSE_2("finishing symbol map for: [" + theme_name + "]")
 		return {make_local_symbol_map(derulo, scope_map)};
 	}
 	catch(const SysthemeException& e) {

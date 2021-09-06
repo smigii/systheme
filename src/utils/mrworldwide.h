@@ -5,7 +5,7 @@
 #ifndef SYSTHEME_MRWORLDWIDE_H
 #define SYSTHEME_MRWORLDWIDE_H
 
-#define ST_VERSION "0.0.0"
+#define ST_VERSION "0.0.1"
 
 #define OPEN "[%"
 #define CLOSE "%]"

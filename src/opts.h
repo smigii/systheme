@@ -65,6 +65,20 @@ public:
 
 };
 
+// Increases verbosity indent upon creation,
+// decreases indent when out of scope.
+namespace systheme::opts {
+	struct VerboseIndentScope {
+		VerboseIndentScope() {
+			Opts::inc_vbose_indent();
+		}
+
+		~VerboseIndentScope() {
+			Opts::dec_vbose_indent();
+		}
+	};
+}
+
 class OptsException : public std::runtime_error
 {
 public:
