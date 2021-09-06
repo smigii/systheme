@@ -15,7 +15,7 @@ namespace systheme {
 }
 
 typedef std::unordered_map<std::string, std::unique_ptr<systheme::SymbolNode>> t_symbolmap;
-typedef std::unordered_map<std::string, t_symbolmap> t_scope_map;
+typedef std::unordered_map<std::string, t_symbolmap> t_scopemap;
 
 namespace fs = std::filesystem;
 

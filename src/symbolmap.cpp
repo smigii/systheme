@@ -4,9 +4,7 @@
 
 #include "symbolmap.h"
 
-#include <iostream>
 #include <memory>
-#include <fstream>
 #include <nlohmann/json.hpp>
 
 #include "utils/exceptions.h"
@@ -24,9 +22,9 @@ using json = nlohmann::json;
 struct key_value_scope {
 	const std::string key;
 	const std::string val;
-	const t_scope_map& scope_map;
+	const t_scopemap& scope_map;
 
-	key_value_scope(std::string key, std::string  val, const t_scope_map& scope_map)
+	key_value_scope(std::string key, std::string  val, const t_scopemap& scope_map)
 	: key{std::move(key)}, val{std::move(val)}, scope_map{scope_map} {}
 };
 
@@ -38,9 +36,11 @@ struct key_value_scope {
  * need to return a pointer. */
 std::unique_ptr<json> load_json_theme(const fs::path& theme_path);
 
-t_scope_map make_scope_map(std::unique_ptr<json>& json);
+t_scopemap make_include_map(std::unique_ptr<json>& json);
 
-t_symbolmap make_local_symbol_map(std::unique_ptr<json>& json, const t_scope_map& scope_map);
+void add_locals(std::unique_ptr<json>& json, t_scopemap& scope_map);
+
+t_symbolmap combine_maps(std::unique_ptr<json>& json, const t_scopemap& scope_map, const std::string& json_scope="symbols");
 
 std::unique_ptr<systheme::SymbolNode> handle_json_object(const key_value_scope& kvs);
 
@@ -62,13 +62,25 @@ t_symbolmap systheme::symbol::make_symbol_map(const fs::path& theme_path)
 		OPTS_VBOSE_2("loading JSON file: [" + theme_path.string() + "]")
 		std::unique_ptr<json> derulo {load_json_theme(theme_path)};
 
-		// Create a map for specified includes.
-		// Maps an include (program theme) to a symbol map.
-		OPTS_VBOSE_2("handling includes for: [" + theme_name + "]")
-		t_scope_map scope_map {make_scope_map(derulo)};
+		t_scopemap include_map;
+
+		if(derulo->contains("includes")) {
+			// Create a map for specified includes.
+			// Maps an include (program theme) to a symbol map.
+			OPTS_VBOSE_2("handling includes for: [" + theme_name + "]")
+			include_map = make_include_map(derulo);
+		}
+
+		if(derulo->contains("locals")) {
+			OPTS_VBOSE_2("handling locals for: [" + theme_name + "]")
+			add_locals(derulo, include_map);
+		}
+
+		if(!derulo->contains("symbols"))
+			throw SysthemeException("No \"symbols\" section found in theme: [" + theme_path.string() + "]");
 
 		OPTS_VBOSE_2("finishing symbol map for: [" + theme_name + "]")
-		return {make_local_symbol_map(derulo, scope_map)};
+		return {combine_maps(derulo, include_map)};
 	}
 	catch(const SysthemeException& e) {
 		throw SysthemeException("Error processing theme " + theme_path.string() + "\n" + e.msg());
@@ -89,9 +101,9 @@ std::unique_ptr<json> load_json_theme(const fs::path& theme_path)
 }
 
 
-t_scope_map make_scope_map(std::unique_ptr<json>& json)
+t_scopemap make_include_map(std::unique_ptr<json>& json)
 {
-	t_scope_map scope_map;
+	t_scopemap scope_map;
 	for(const auto& include : (*json)["includes"].items()){
 		std::string inc_config {include.key()};
 		std::string inc_theme {include.value()};
@@ -104,11 +116,18 @@ t_scope_map make_scope_map(std::unique_ptr<json>& json)
 }
 
 
-t_symbolmap make_local_symbol_map(std::unique_ptr<json>& json, const t_scope_map& scope_map)
+void add_locals(std::unique_ptr<json>& json, t_scopemap& scope_map)
+{
+	t_symbolmap local_map = combine_maps(json, scope_map, "locals");
+	scope_map.insert(std::make_pair("locals", std::move(local_map)));
+}
+
+
+t_symbolmap combine_maps(std::unique_ptr<json>& json, const t_scopemap& scope_map, const std::string& json_scope)
 {
 	t_symbolmap result;
 
-	for(const auto& kvp : (*json)["symbols"].items()){
+	for(const auto& kvp : (*json)[json_scope].items()){
 		std::string key {kvp.key()};
 		std::unique_ptr<systheme::SymbolNode> val;
 		if(kvp.value().type() == json::value_t::string){

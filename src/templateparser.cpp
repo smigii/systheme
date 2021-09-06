@@ -52,6 +52,7 @@ public:
 
 };
 
+
 TemplateLineParser::TemplateLineParser(const t_symbolmap *symbol_map, std::ofstream& ofs)
 : symbol_map{symbol_map}, ofs{ofs} {}
 
