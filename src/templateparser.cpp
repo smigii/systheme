@@ -164,7 +164,7 @@ void systheme::templates::process_template(const std::string &program, const std
 	t_symbolmap symbol_map {systheme::symbol::make_symbol_map(theme_path)};
 
 	OPTS_VBOSE_2("processing template header...")
-	systheme::parsers::TemplateHeader header(template_path);
+	systheme::templates::TemplateHeader header(template_path);
 
 	std::ifstream ifs(template_path);
 	fs::path output_path {header.get_dst()};

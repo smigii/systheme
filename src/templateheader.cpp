@@ -20,7 +20,7 @@
 #define PRE_SCRIPT "PRE"
 
 
-systheme::parsers::TemplateHeader::TemplateHeader(fs::path  tplate_path)
+systheme::templates::TemplateHeader::TemplateHeader(fs::path  tplate_path)
 : template_path{std::move(tplate_path)}
 {
 	std::vector<std::string> tokens;
@@ -59,7 +59,8 @@ systheme::parsers::TemplateHeader::TemplateHeader(fs::path  tplate_path)
 }
 
 
-bool systheme::parsers::TemplateHeader::process_tokens(const std::vector<std::string>& tokens) {
+bool systheme::templates::TemplateHeader::process_tokens(const std::vector<std::string>& tokens)
+{
 
 	// Empty line
 	if(tokens.empty())
@@ -107,25 +108,26 @@ bool systheme::parsers::TemplateHeader::process_tokens(const std::vector<std::st
 }
 
 
-fs::path systheme::parsers::TemplateHeader::get_dst() const
+fs::path systheme::templates::TemplateHeader::get_dst() const
 {
 	return destination;
 }
 
 
-fs::path systheme::parsers::TemplateHeader::get_post_path() const
+fs::path systheme::templates::TemplateHeader::get_post_path() const
 {
 	return post_path;
 }
 
 
-size_t systheme::parsers::TemplateHeader::get_first_line_num() const
+size_t systheme::templates::TemplateHeader::get_first_line_num() const
 {
 	return first_line_num;
 }
 
 
-fs::path systheme::parsers::TemplateHeader::get_pre_path() const {
+fs::path systheme::templates::TemplateHeader::get_pre_path() const
+{
 	return pre_path;
 }
 

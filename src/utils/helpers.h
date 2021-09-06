@@ -10,7 +10,7 @@
 
 namespace fs = std::filesystem;
 
-namespace systheme::utils{
+namespace systheme::utils {
 
 	// Returns a string in the format MONTH-DAY-HOUR-MIN-SEC
 	[[nodiscard]] inline std::string get_time_stamp()

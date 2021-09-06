@@ -13,6 +13,7 @@ namespace systheme::interface {
 	void apply_program_theme(const std::string& program, const std::string& theme);
 
 	void apply_system_theme(const std::string& theme);
+
 }
 
 

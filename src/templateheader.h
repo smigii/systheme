@@ -10,7 +10,7 @@
 
 namespace fs = std::filesystem;
 
-namespace systheme::parsers {
+namespace systheme::templates {
 
 	class TemplateHeader {
 
